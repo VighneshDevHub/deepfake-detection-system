@@ -63,6 +63,11 @@ checkpoints/
 *.h5
 *.ckpt
 
+*.onnx
+*.onnx.data
+exports/
+
+
 # -----------------------------
 # Temporary Files
 # -----------------------------
@@ -90,6 +95,7 @@ Thumbs.db
 # Output / Results
 # -----------------------------
 outputs/
+output/
 results/
 predictions/
 
