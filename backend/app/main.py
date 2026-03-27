@@ -1,6 +1,7 @@
 # backend/app/main.py
 
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -12,27 +13,26 @@ from app.core.exceptions import (
     model_not_loaded_handler, invalid_image_handler,
     file_too_large_handler, unsupported_type_handler,
 )
-from app.services.inference import inference_service
+from app.services.inference    import inference_service
+from app.services.gradcam      import gradcam_service
+from app.services.face_detector import face_detector
 from app.routers import detection, health
 
 logger   = get_logger(__name__)
 settings = get_settings()
 
 
-# ── Lifespan — runs on startup and shutdown ────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # STARTUP
+    # ── STARTUP ───────────────────────────────────────────────────────
     setup_logging(debug=settings.debug)
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
-    
-    # Load ONNX model
-    inference_service.load(settings.model_path)
-    logger.info("Model loaded — server ready")
 
-# Load Grad-CAM model (PyTorch .pth)
-    from pathlib import Path
-    from app.services.gradcam import gradcam_service
+    # 1. ONNX model
+    inference_service.load(settings.model_path)
+    logger.info("ONNX model loaded")
+
+    # 2. Grad-CAM PyTorch model
     pth_path = Path(settings.gradcam_model_path)
     if pth_path.exists():
         gradcam_service.load(str(pth_path))
@@ -43,14 +43,19 @@ async def lifespan(app: FastAPI):
             "explanations will be disabled"
         )
 
+    # 3. Face detector
+    try:
+        face_detector.load()
+        logger.info("Face detector loaded")
+    except Exception as e:
+        logger.warning(f"Face detector failed to load: {e}")
 
     logger.info("Server ready")
     yield
-    # SHUTDOWN
+    # ── SHUTDOWN ──────────────────────────────────────────────────────
     logger.info("Shutting down")
 
 
-# ── App ────────────────────────────────────────────────────────────────────
 app = FastAPI(
     title       = settings.app_name,
     version     = settings.app_version,
@@ -58,7 +63,6 @@ app = FastAPI(
     lifespan    = lifespan,
 )
 
-# ── CORS ───────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins     = settings.origins_list,
@@ -67,13 +71,11 @@ app.add_middleware(
     allow_headers     = ["*"],
 )
 
-# ── Exception handlers ─────────────────────────────────────────────────────
-app.add_exception_handler(ModelNotLoadedError,     model_not_loaded_handler)
-app.add_exception_handler(InvalidImageError,       invalid_image_handler)
-app.add_exception_handler(FileTooLargeError,       file_too_large_handler)
+app.add_exception_handler(ModelNotLoadedError,      model_not_loaded_handler)
+app.add_exception_handler(InvalidImageError,        invalid_image_handler)
+app.add_exception_handler(FileTooLargeError,        file_too_large_handler)
 app.add_exception_handler(UnsupportedFileTypeError, unsupported_type_handler)
 
-# ── Routers ────────────────────────────────────────────────────────────────
 app.include_router(health.router,    prefix="/api/v1")
 app.include_router(detection.router, prefix="/api/v1")
 

@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     gradcam_model_path: str = "models/best_model.pth"    # ← NEW
 
 
+    enable_face_detection: bool = True
+
+
     # Upload limits
     max_file_size_mb: int = 10
 

@@ -41,6 +41,9 @@ class DetectionResponse(BaseModel):
     gradcam_image : Optional[str]             = None
     heatmap_image : Optional[str]             = None
     top_regions   : Optional[list]            = None
+    face_detected  : bool          = False
+    face_confidence: float         = 0.0
+    face_warning   : Optional[str] = None
 
 
 class HealthResponse(BaseModel):
