@@ -17,6 +17,8 @@ from app.services.inference    import inference_service
 from app.services.gradcam      import gradcam_service
 from app.services.face_detector import face_detector
 from app.routers import detection, health
+from app.routers import video
+
 
 logger   = get_logger(__name__)
 settings = get_settings()
@@ -78,6 +80,8 @@ app.add_exception_handler(UnsupportedFileTypeError, unsupported_type_handler)
 
 app.include_router(health.router,    prefix="/api/v1")
 app.include_router(detection.router, prefix="/api/v1")
+app.include_router(video.router, prefix="/api/v1")
+
 
 
 @app.get("/", tags=["Root"])
