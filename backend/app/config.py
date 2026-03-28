@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     enable_face_detection: bool = True
 
+    default_threshold: float = 0.5
+
 
     # Upload limits
     max_file_size_mb: int = 10

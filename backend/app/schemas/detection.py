@@ -19,6 +19,7 @@ class DetectionResponse(BaseModel):
                 "is_fake"       : True,
                 "real_prob"     : 3.86,
                 "fake_prob"     : 96.14,
+                "threshold_used" : 0.5,
                 "model_version" : "efficientnet-b4-v1",
                 "gradcam_image" : "<base64 string>",
                 "heatmap_image" : "<base64 string>",
@@ -37,6 +38,7 @@ class DetectionResponse(BaseModel):
     is_fake       : bool
     real_prob     : float
     fake_prob     : float
+    threshold_used  : float           = 0.5
     model_version : str                       = "efficientnet-b4-v1"
     gradcam_image : Optional[str]             = None
     heatmap_image : Optional[str]             = None
