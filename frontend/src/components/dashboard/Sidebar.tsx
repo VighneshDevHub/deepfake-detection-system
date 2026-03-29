@@ -5,7 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   LayoutDashboard, 
-  ShieldCheck, 
+  Image as ImageIcon,
+  Film,
+  Mic,
+  FileText,
   History, 
   Settings, 
   LogOut,
@@ -17,7 +20,10 @@ import { Logo } from "../shared/Logo";
 
 const menuItems = [
   { name: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-  { name: "Detection", icon: ShieldCheck, href: "/detect" },
+  { name: "Image Scan", icon: ImageIcon, href: "/detect-image" },
+  { name: "Video Scan", icon: Film, href: "/detect-video" },
+  { name: "Audio Scan", icon: Mic, href: "/detect-audio" },
+  { name: "Text Scan", icon: FileText, href: "/detect-text" },
   { name: "History", icon: History, href: "/history" },
   { name: "Settings", icon: Settings, href: "/settings" },
 ];

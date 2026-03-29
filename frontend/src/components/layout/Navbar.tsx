@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, Github, Menu, X } from "lucide-react";
+import { LayoutDashboard, Github, Menu, X, Image as ImageIcon, Film, Mic, FileText } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Logo } from "../shared/Logo";
 import { useState } from "react";
@@ -11,9 +11,10 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
-    { name: "Features", href: "/#features" },
-    { name: "How it works", href: "/#how-it-works" },
-    { name: "Pricing", href: "/#pricing" },
+    { name: "Image", href: "/detect-image", icon: ImageIcon },
+    { name: "Video", href: "/detect-video", icon: Film },
+    { name: "Audio", href: "/detect-audio", icon: Mic },
+    { name: "Text", href: "/detect-text", icon: FileText },
   ];
 
   return (
@@ -26,8 +27,9 @@ export function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="text-sm font-medium text-zinc-400 transition-colors hover:text-primary"
+              className="flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-primary"
             >
+              <link.icon size={16} />
               {link.name}
             </Link>
           ))}
@@ -82,9 +84,10 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="text-lg font-medium text-zinc-400"
+                  className="flex items-center gap-3 text-lg font-medium text-zinc-400"
                   onClick={() => setIsOpen(false)}
                 >
+                  <link.icon size={20} />
                   {link.name}
                 </Link>
               ))}

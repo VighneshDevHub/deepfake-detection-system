@@ -5,13 +5,8 @@ import {
   ShieldCheck, 
   Search, 
   Image as ImageIcon, 
-  Film, 
-  History, 
-  Settings as SettingsIcon,
   AlertTriangle,
   Loader2,
-  CheckCircle2,
-  XCircle,
   BarChart3,
   RefreshCw,
   Zap,
@@ -23,23 +18,20 @@ import { Button } from "@/components/ui/Button";
 import { FileUploader } from "@/components/detection/FileUploader";
 import { ThresholdSlider } from "@/components/ui/ThresholdSlider";
 import { DetectionResult } from "@/components/detection/DetectionResult";
-import { VideoResult } from "@/components/detection/VideoResult";
-import { detectImage, detectVideo } from "@/lib/api";
-import { DetectionResult as DetectionResultType, VideoDetectionResult } from "@/types";
+import { detectImage } from "@/lib/api";
+import { DetectionResult as DetectionResultType } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-export default function DetectPage() {
-  const [activeTab, setActiveTab] = useState<"image" | "video">("image");
+export default function DetectImagePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [imageResult, setImageResult] = useState<DetectionResultType | null>(null);
-  const [videoResult, setVideoResult] = useState<VideoDetectionResult | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [threshold, setThreshold] = useState(0.5);
 
   const handleFileSelect = (file: File) => {
     setSelectedFile(file);
     setImageResult(null);
-    setVideoResult(null);
   };
 
   const handleAnalyze = async () => {
@@ -52,17 +44,10 @@ export default function DetectPage() {
     const toastId = toast.loading("Initializing forensic scan...");
     
     try {
-      if (activeTab === "image") {
-        const result = await detectImage(selectedFile, threshold);
-        setImageResult(result);
-        toast.success("Image analysis complete.", { id: toastId });
-        saveToHistory(result, "image");
-      } else {
-        const result = await detectVideo(selectedFile, threshold);
-        setVideoResult(result);
-        toast.success("Video analysis complete.", { id: toastId });
-        saveToHistory(result, "video");
-      }
+      const result = await detectImage(selectedFile, threshold);
+      setImageResult(result);
+      toast.success("Image analysis complete.", { id: toastId });
+      saveToHistory(result, "image");
     } catch (error: any) {
       console.error(error);
       toast.error(error.response?.data?.detail || "Scan failed. Please check network connectivity.", { id: toastId });
@@ -87,7 +72,6 @@ export default function DetectPage() {
   const resetAnalysis = () => {
     setSelectedFile(null);
     setImageResult(null);
-    setVideoResult(null);
   };
 
   return (
@@ -98,7 +82,7 @@ export default function DetectPage() {
           animate={{ opacity: 1, x: 0 }}
           className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary glow-primary"
         >
-          FORENSIC ANALYZER
+          IMAGE FORENSICS
         </motion.div>
         <motion.h1
           initial={{ opacity: 0, x: -20 }}
@@ -106,46 +90,20 @@ export default function DetectPage() {
           transition={{ delay: 0.1 }}
           className="text-4xl font-black tracking-tighter text-white sm:text-5xl"
         >
-          INITIALIZE <span className="text-primary">SCAN</span>
+          IMAGE <span className="text-primary">DETECTION</span>
         </motion.h1>
       </header>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-        {/* Controls Panel */}
         <div className="lg:col-span-1 space-y-10">
           <div className="rounded-3xl border border-white/5 bg-white/5 p-8 backdrop-blur-3xl">
             <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-6">SCAN <span className="text-primary">CONFIG</span></h3>
             
             <div className="space-y-8">
-              <div className="flex gap-2 rounded-xl bg-white/5 p-1 border border-white/5">
-                <button
-                  onClick={() => { setActiveTab("image"); resetAnalysis(); }}
-                  className={cn(
-                    "flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-[10px] font-black uppercase tracking-widest transition-all",
-                    activeTab === "image" 
-                      ? "bg-primary text-background-dark glow-primary" 
-                      : "text-zinc-500 hover:text-white"
-                  )}
-                >
-                  <ImageIcon size={14} /> IMAGE
-                </button>
-                <button
-                  onClick={() => { setActiveTab("video"); resetAnalysis(); }}
-                  className={cn(
-                    "flex flex-1 items-center justify-center gap-2 rounded-lg py-3 text-[10px] font-black uppercase tracking-widest transition-all",
-                    activeTab === "video" 
-                      ? "bg-primary text-background-dark glow-primary" 
-                      : "text-zinc-500 hover:text-white"
-                  )}
-                >
-                  <Film size={14} /> VIDEO
-                </button>
-              </div>
-
               <ThresholdSlider value={threshold} onChange={setThreshold} />
 
               <FileUploader 
-                type={activeTab} 
+                type="image" 
                 onFileSelect={handleFileSelect} 
                 className="aspect-square p-8" 
               />
@@ -167,7 +125,7 @@ export default function DetectPage() {
                 )}
               </Button>
               
-              {(imageResult || videoResult) && (
+              {imageResult && (
                 <button 
                   className="w-full text-center text-[10px] font-black text-zinc-600 uppercase tracking-widest hover:text-zinc-400 transition-colors"
                   onClick={resetAnalysis}
@@ -191,10 +149,9 @@ export default function DetectPage() {
           </div>
         </div>
 
-        {/* Results Panel */}
         <div className="lg:col-span-2">
           <AnimatePresence mode="wait">
-            {!imageResult && !videoResult && !isLoading && (
+            {!imageResult && !isLoading && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -202,11 +159,11 @@ export default function DetectPage() {
                 className="flex h-full min-h-[600px] flex-col items-center justify-center rounded-[3rem] border-2 border-dashed border-white/5 bg-white/2 backdrop-blur-3xl text-center p-12"
               >
                 <div className="mb-8 flex h-24 w-24 items-center justify-center rounded-[2.5rem] bg-white/5 text-zinc-700">
-                  <BarChart3 size={48} />
+                  <ImageIcon size={48} />
                 </div>
-                <h3 className="mb-4 text-2xl font-black text-white uppercase tracking-tighter">WAITING FOR <span className="text-primary">FORENSIC DATA</span></h3>
+                <h3 className="mb-4 text-2xl font-black text-white uppercase tracking-tighter">WAITING FOR <span className="text-primary">IMAGE DATA</span></h3>
                 <p className="max-w-xs text-sm font-medium text-zinc-500 uppercase tracking-widest leading-relaxed">
-                  Select an {activeTab} entity and initialize the scan protocol to see the analysis results here.
+                  Upload an image and initialize the scan protocol to see the analysis results here.
                 </p>
               </motion.div>
             )}
@@ -226,9 +183,7 @@ export default function DetectPage() {
                 </div>
                 <h3 className="mb-4 text-2xl font-black text-white uppercase tracking-tighter">SCANNING <span className="text-primary">ARTIFACTS...</span></h3>
                 <p className="max-w-sm text-sm font-medium text-zinc-500 uppercase tracking-widest leading-relaxed">
-                  {activeTab === "video" 
-                    ? "Executing temporal consistency scan across extracted frames. Analyzing GAN-characteristic artifacts." 
-                    : "Running EfficientNet-B4 ONNX inference. Generating Grad-CAM region activation map."}
+                  Running EfficientNet-B4 ONNX inference. Generating Grad-CAM region activation map.
                 </p>
                 <div className="mt-12 flex gap-4">
                   <div className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 border border-white/5">
@@ -253,22 +208,9 @@ export default function DetectPage() {
                 <DetectionResult result={imageResult} />
               </motion.div>
             )}
-
-            {videoResult && !isLoading && (
-              <motion.div
-                key="video-result"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="w-full"
-              >
-                <VideoResult result={videoResult} />
-              </motion.div>
-            )}
           </AnimatePresence>
         </div>
       </div>
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";
