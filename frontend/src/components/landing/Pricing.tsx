@@ -2,79 +2,90 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Check, X, ShieldCheck, Zap, Lock } from "lucide-react";
+import { 
+  Shield, 
+  Zap as ZapIcon, 
+  Lock as LockIcon, 
+  Check as CheckIcon, 
+  X, 
+  Terminal 
+} from "lucide-react";
 import { Button } from "../ui/Button";
 
 const plans = [
   {
-    name: "Individual",
+    name: "Standard_Node",
+    id: "PLAN_01",
     price: "0",
-    description: "Perfect for casual users and journalists.",
+    description: "Entry-level forensic access for independent journalists.",
     features: [
-      { name: "Image Detection", included: true },
+      { name: "Image Forensic Scan", included: true },
       { name: "Video Analysis (1/day)", included: true },
       { name: "Grad-CAM Overlays", included: true },
-      { name: "Face Detection", included: true },
+      { name: "Face Detection Core", included: true },
       { name: "Batch Processing", included: false },
-      { name: "Priority Support", included: false },
+      { name: "API Access", included: false },
     ],
-    icon: ShieldCheck,
+    icon: Shield,
     color: "primary"
   },
   {
-    name: "Forensic Pro",
-    price: "29",
-    description: "Designed for professional media investigators.",
+    name: "Forensic_Pro",
+    id: "PLAN_02",
+    price: "49",
+    description: "Full-spectrum analysis for professional investigators.",
     features: [
-      { name: "Image Detection", included: true },
-      { name: "Video Analysis (Unlimited)", included: true },
+      { name: "Image Forensic Scan", included: true },
+      { name: "Unlimited Video Analysis", included: true },
       { name: "Grad-CAM Overlays", included: true },
-      { name: "Face Detection", included: true },
+      { name: "Advanced Face Detection", included: true },
       { name: "Batch Processing", included: true },
-      { name: "Priority Support", included: true },
+      { name: "Priority Node Access", included: true },
     ],
-    icon: Zap,
+    icon: ZapIcon,
     color: "accent",
     popular: true
   },
   {
-    name: "Enterprise",
-    price: "99",
-    description: "Built for news organizations and platforms.",
+    name: "Enterprise_SLA",
+    id: "PLAN_03",
+    price: "199",
+    description: "Industrial-grade throughput for news organizations.",
     features: [
-      { name: "Image Detection", included: true },
-      { name: "Video Analysis (Unlimited)", included: true },
+      { name: "Image Forensic Scan", included: true },
+      { name: "Unlimited Video Analysis", included: true },
       { name: "Grad-CAM Overlays", included: true },
-      { name: "Face Detection", included: true },
-      { name: "Batch Processing", included: true },
-      { name: "Priority Support", included: true },
+      { name: "Custom Model Training", included: true },
+      { name: "White-label Reports", included: true },
+      { name: "24/7 Forensic Support", included: true },
     ],
-    icon: Lock,
+    icon: LockIcon,
     color: "success"
   }
 ];
 
 export function Pricing() {
   return (
-    <section id="pricing" className="relative py-32 bg-background-dark overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-24 text-center">
+    <section id="pricing" className="relative py-40 bg-[#050505] overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="mb-32 text-center">
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-primary glow-primary"
+            className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-primary glow-primary backdrop-blur-xl"
           >
-            FLEXIBLE PLANS
+            <Terminal size={12} />
+            Service Level Agreements
           </motion.div>
           <motion.h2
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl font-black tracking-tighter text-white sm:text-5xl lg:text-6xl"
+            className="text-5xl font-black tracking-tighter text-white sm:text-7xl leading-[0.9]"
           >
-            TRANSPARENT PRICING
+            TRANSPARENT <span className="text-primary">PRICING</span>
           </motion.h2>
         </div>
 
@@ -82,46 +93,53 @@ export function Pricing() {
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={`relative flex flex-col gap-8 rounded-3xl border ${plan.popular ? 'border-accent/40 bg-white/10 glow-accent' : 'border-white/5 bg-white/5'} p-10 backdrop-blur-3xl transition-all hover:-translate-y-2`}
+              className={`relative flex flex-col gap-10 rounded-[2.5rem] border ${plan.popular ? 'border-accent/30 bg-white/[0.04] shadow-[0_0_50px_rgba(255,0,255,0.05)]' : 'border-white/5 bg-white/[0.02]'} p-12 backdrop-blur-3xl transition-all hover:-translate-y-2`}
             >
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-accent px-4 py-1 text-[10px] font-black uppercase tracking-widest text-white glow-accent">
-                  Most Popular
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-accent px-6 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-white glow-accent">
+                  Most Deployed
                 </div>
               )}
 
               <div className="flex items-center justify-between">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-${plan.color}/10 text-${plan.color}`}>
-                  <plan.icon size={28} />
+                <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-${plan.color}/10 text-${plan.color} border border-${plan.color}/20`}>
+                  <plan.icon size={32} />
                 </div>
                 <div className="text-right">
-                  <div className="text-3xl font-black text-white">${plan.price}</div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-zinc-500">per month</div>
+                  <div className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-1">{plan.id}</div>
+                  <div className="flex items-baseline justify-end gap-1">
+                    <span className="text-4xl font-black text-white">${plan.price}</span>
+                    <span className="text-xs font-bold text-zinc-600 uppercase tracking-widest">/mo</span>
+                  </div>
                 </div>
               </div>
 
               <div>
-                <h3 className="text-2xl font-black text-white">{plan.name}</h3>
-                <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-500">
+                <h3 className="text-3xl font-black text-white tracking-tight mb-3">{plan.name}</h3>
+                <p className="text-sm font-medium leading-relaxed text-zinc-500">
                   {plan.description}
                 </p>
               </div>
 
-              <div className="h-[1px] w-full bg-white/5" />
+              <div className="h-px w-full bg-gradient-to-r from-transparent via-white/5 to-transparent" />
 
-              <ul className="flex-1 space-y-4">
+              <ul className="flex-1 space-y-5">
                 {plan.features.map((feature) => (
-                  <li key={feature.name} className="flex items-center gap-3">
+                  <li key={feature.name} className="flex items-center gap-4">
                     {feature.included ? (
-                      <Check size={18} className={`text-${plan.color}`} />
+                      <div className={`h-5 w-5 rounded-full bg-${plan.color}/10 flex items-center justify-center border border-${plan.color}/20`}>
+                        <CheckIcon size={12} className={`text-${plan.color}`} />
+                      </div>
                     ) : (
-                      <X size={18} className="text-zinc-700" />
+                      <div className="h-5 w-5 rounded-full bg-zinc-900 flex items-center justify-center border border-white/5">
+                        <X size={12} className="text-zinc-700" />
+                      </div>
                     )}
-                    <span className={`text-sm font-medium ${feature.included ? 'text-zinc-300' : 'text-zinc-600'}`}>
+                    <span className={`text-sm font-medium tracking-tight ${feature.included ? 'text-zinc-300' : 'text-zinc-600'}`}>
                       {feature.name}
                     </span>
                   </li>
@@ -130,9 +148,9 @@ export function Pricing() {
 
               <Button
                 variant={plan.popular ? 'primary' : 'outline'}
-                className={`w-full rounded-xl py-6 font-black uppercase tracking-widest ${plan.popular ? 'bg-accent text-white glow-accent hover:bg-accent/90' : 'border-white/10 text-white hover:bg-white/10'}`}
+                className={`w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] transition-all ${plan.popular ? 'bg-accent text-white glow-accent hover:bg-accent/90' : 'border-white/10 text-white hover:bg-white/10'}`}
               >
-                Choose {plan.name}
+                Deploy {plan.name}
               </Button>
             </motion.div>
           ))}

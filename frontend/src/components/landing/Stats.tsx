@@ -2,37 +2,81 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { Activity, ShieldCheck, Zap, Globe, Cpu, BarChart3 } from "lucide-react";
 
 const stats = [
-  { label: "Images Trained", value: "12K+", color: "primary" },
-  { label: "Accuracy", value: "96%+", color: "accent" },
-  { label: "Inference Speed", value: "<500ms", color: "success" },
-  { label: "Faces Detected", value: "1.2M+", color: "warning" },
+  { 
+    label: "Neural Training Set", 
+    value: "1.2M+", 
+    icon: Database,
+    color: "primary",
+    desc: "Curated forensic samples"
+  },
+  { 
+    label: "Model Precision", 
+    value: "96.8%", 
+    icon: ShieldCheck,
+    color: "accent",
+    desc: "Validated on benchmark sets"
+  },
+  { 
+    label: "Inference Latency", 
+    value: "<450ms", 
+    icon: Zap,
+    color: "success",
+    desc: "GPU-accelerated analysis"
+  },
+  { 
+    label: "Global Node Network", 
+    value: "12", 
+    icon: Globe,
+    color: "primary",
+    desc: "Distributed processing"
+  },
 ];
+
+import { Database } from "lucide-react";
 
 export function Stats() {
   return (
-    <section className="relative py-24 bg-background-elevated overflow-hidden border-y border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+    <section className="relative py-24 bg-[#050505] overflow-hidden border-y border-white/5">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group flex flex-col items-center justify-center p-8 rounded-3xl border border-white/5 bg-background-dark/50 backdrop-blur-3xl transition-all hover:border-white/10 hover:bg-white/5 hover:shadow-2xl hover:shadow-primary/5"
+              className="group relative flex flex-col p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl transition-all hover:border-primary/20 hover:bg-white/[0.04]"
             >
-              <div className={`mb-2 text-4xl font-black text-${stat.color} glow-${stat.color} drop-shadow-[0_0_10px_rgba(0,240,255,0.3)] sm:text-5xl lg:text-6xl`}>
-                {stat.value}
+              <div className="flex items-center justify-between mb-6">
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-${stat.color}/10 text-${stat.color} glow-${stat.color} transition-transform group-hover:scale-110`}>
+                  <stat.icon size={24} />
+                </div>
+                <div className="text-[10px] font-mono text-zinc-600 font-bold uppercase tracking-widest">
+                  Live_Data // {i + 1}
+                </div>
               </div>
-              <div className="text-sm font-bold uppercase tracking-widest text-zinc-500 group-hover:text-zinc-400 transition-colors">
-                {stat.label}
+
+              <div>
+                <div className={`text-4xl font-black text-white tracking-tighter mb-1`}>
+                  {stat.value}
+                </div>
+                <div className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-4 group-hover:text-primary transition-colors">
+                  {stat.label}
+                </div>
+                <p className="text-xs font-medium text-zinc-600 leading-relaxed">
+                  {stat.desc}
+                </p>
               </div>
               
-              {/* Animated highlight */}
-              <div className={`mt-6 h-1 w-8 rounded-full bg-${stat.color}/20 transition-all group-hover:w-16 group-hover:bg-${stat.color}/50`} />
+              {/* Bottom decorative bar */}
+              <div className="absolute bottom-0 left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-white/5 to-transparent transition-all group-hover:via-primary/30" />
             </motion.div>
           ))}
         </div>
