@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DeepFakeDetect: Forensic Dashboard (Next.js)
 
-## Getting Started
+The frontend for DeepFakeDetect is a premium, cybersecurity-first dashboard built with Next.js 15+ and Tailwind CSS 4. It provides a highly interactive and intuitive interface for media analysis.
 
-First, run the development server:
+## 🚀 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Cybersecurity Theme**: Dark-mode-first design with electric cyan and glassmorphism.
+- **Forensic Analyzer**: Advanced media uploader with real-time progress and visual feedback.
+- **Interactive Heatmaps**: Dynamic Grad-CAM region activation viewer for images.
+- **Video Breakdown**: Frame-by-frame analysis with temporal consistency scoring.
+- **Data Archive**: LocalStorage-based scan history for quick retrieval.
+- **Responsive Interface**: Fully optimized for desktop, tablet, and mobile forensics.
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15+ (App Router)
+- **Library**: React 19
+- **Styling**: Tailwind CSS 4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **API Client**: Axios
+
+## 📂 Project Structure
+
+```
+frontend/src/
+├── app/
+│   ├── (auth)/         # Sign-in & Sign-up pages
+│   ├── (dashboard)/    # Core analyzer, history, and settings
+│   └── page.tsx        # Hero landing page
+├── components/
+│   ├── ui/             # Core primitives (Button, Input, etc.)
+│   ├── landing/        # Landing page sections
+│   ├── dashboard/      # Layout and overview components
+│   └── detection/      # Specialized forensic components
+└── lib/
+    ├── api.ts          # Backend API integration
+    └── utils.ts        # Helper functions
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏁 Setup & Execution
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Environment Variables**: Create `frontend/.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    ```env
+    NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    ```
 
-## Learn More
+2.  **Installation**:
 
-To learn more about Next.js, take a look at the following resources:
+    ```bash
+    pnpm install
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Execution**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ```bash
+    pnpm dev
+    ```
 
-## Deploy on Vercel
+4.  **Production Build**:
+    ```bash
+    pnpm build
+    pnpm start
+    ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ⚖️ Forensic Disclaimer
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This dashboard provides high-confidence forensic data but is not infallible. Results should be cross-verified using other investigative techniques.
