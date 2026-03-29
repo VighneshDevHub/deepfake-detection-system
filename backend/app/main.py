@@ -31,8 +31,14 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
 
     # 1. ONNX model
-    inference_service.load(settings.model_path)
-    logger.info("ONNX model loaded")
+    try:
+        inference_service.load(settings.model_path)
+        logger.info(f"ONNX model loaded from {settings.model_path}")
+    except FileNotFoundError as e:
+        logger.error(f"Failed to load ONNX model: {e}")
+        logger.warning("Detection features will be unavailable until model is provided.")
+    except Exception as e:
+        logger.error(f"Unexpected error loading ONNX model: {e}")
 
     # 2. Grad-CAM PyTorch model
     pth_path = Path(settings.gradcam_model_path)
@@ -67,7 +73,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins     = settings.origins_list,
+    allow_origins     = ["*"],  # Use wildcard for dev to avoid "Network Error" (CORS)
     allow_credentials = True,
     allow_methods     = ["*"],
     allow_headers     = ["*"],

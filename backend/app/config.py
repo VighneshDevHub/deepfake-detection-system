@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     max_file_size_mb: int = 10
 
     # CORS
-    allowed_origins: str = "http://localhost:3000"
+    allowed_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
     class Config:
         env_file = ".env"
