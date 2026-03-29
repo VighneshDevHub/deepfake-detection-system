@@ -33,6 +33,7 @@ ENV/
 # Jupyter Notebook
 # -----------------------------
 .ipynb_checkpoints
+notebooks/
 
 # -----------------------------
 # Environment Variables
