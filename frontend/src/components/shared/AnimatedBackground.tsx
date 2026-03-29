@@ -5,45 +5,32 @@ import { motion } from "framer-motion";
 
 export function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-background-dark">
-      {/* Dynamic gradient background */}
-      <div className="absolute inset-0 bg-cyber-gradient" />
-      
-      {/* Animated glow particles */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.1, 0.2, 0.1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute -left-[10%] -top-[10%] h-[50%] w-[50%] rounded-full bg-primary/20 blur-[120px]"
-      />
-      
-      <motion.div
-        animate={{
-          scale: [1, 1.3, 1],
-          opacity: [0.05, 0.15, 0.05],
-        }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 2,
-        }}
-        className="absolute -right-[10%] -bottom-[10%] h-[60%] w-[60%] rounded-full bg-accent/10 blur-[150px]"
-      />
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-[#020202]">
+      {/* Subtle Grain Texture */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Ffilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
 
-      {/* Grid lines */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(#00F0FF 1px, transparent 1px), linear-gradient(90deg, #00F0FF 1px, transparent 1px)`,
-          backgroundSize: '50px 50px'
+      {/* Structured Grid - Multi-layer */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', backgroundSize: '80px 80px' }} />
+      <div className="absolute inset-0 opacity-[0.01]" style={{ backgroundImage: 'linear-gradient(to right, #ffffff 1px, transparent 1px), linear-gradient(to bottom, #ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+      
+      {/* Precision Markers */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #00F0FF 1px, transparent 1px)', backgroundSize: '160px 160px' }} />
+
+      {/* Focal Ambient Glows - Reduced Intensity for Professionalism */}
+      <div className="absolute top-0 left-1/4 w-[1000px] h-[600px] bg-primary/5 blur-[120px] rounded-full -translate-y-1/2" />
+      <div className="absolute bottom-0 right-1/4 w-[800px] h-[500px] bg-accent/5 blur-[100px] rounded-full translate-y-1/2" />
+
+      {/* Animated Scanning Streak */}
+      <motion.div
+        animate={{
+          top: ['-10%', '110%'],
         }}
+        transition={{
+          duration: 15,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+        className="absolute left-0 w-full h-[20vh] bg-gradient-to-b from-transparent via-primary/[0.03] to-transparent pointer-events-none"
       />
     </div>
   );

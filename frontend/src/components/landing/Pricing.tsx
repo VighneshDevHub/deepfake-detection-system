@@ -66,7 +66,7 @@ const plans = [
 
 export function Pricing() {
   return (
-    <section id="pricing" className="relative py-40 bg-[#050505] overflow-hidden">
+    <section id="pricing" className="relative py-48 bg-[#020202] overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="mb-32 text-center">
           <motion.div
@@ -76,14 +76,14 @@ export function Pricing() {
             className="mb-6 inline-flex items-center gap-3 rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-[10px] font-black uppercase tracking-[0.4em] text-primary glow-primary backdrop-blur-xl"
           >
             <Terminal size={12} />
-            Service Level Agreements
+            Service_Level_Agreements
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-5xl font-black tracking-tighter text-white sm:text-7xl leading-[0.9]"
+            className="text-5xl font-black tracking-tight text-white sm:text-7xl leading-[0.9]"
           >
             TRANSPARENT <span className="text-primary">PRICING</span>
           </motion.h2>
@@ -97,7 +97,7 @@ export function Pricing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className={`relative flex flex-col gap-10 rounded-[2.5rem] border ${plan.popular ? 'border-accent/30 bg-white/[0.04] shadow-[0_0_50px_rgba(255,0,255,0.05)]' : 'border-white/5 bg-white/[0.02]'} p-12 backdrop-blur-3xl transition-all hover:-translate-y-2`}
+              className={`relative flex flex-col gap-10 rounded-[2.5rem] border ${plan.popular ? 'border-accent/30 bg-white/[0.03] shadow-[0_0_50px_rgba(255,0,255,0.05)]' : 'border-white/5 bg-white/[0.01]'} p-12 backdrop-blur-3xl transition-all duration-500 hover:-translate-y-2`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-accent px-6 py-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-white glow-accent">
@@ -148,9 +148,9 @@ export function Pricing() {
 
               <Button
                 variant={plan.popular ? 'primary' : 'outline'}
-                className={`w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] transition-all ${plan.popular ? 'bg-accent text-white glow-accent hover:bg-accent/90' : 'border-white/10 text-white hover:bg-white/10'}`}
+                className={`w-full h-16 rounded-2xl font-bold uppercase tracking-widest transition-all ${plan.popular ? 'bg-primary text-background-dark hover:bg-primary/90 shadow-lg shadow-primary/20' : 'border-white/10 text-white hover:bg-white/5'}`}
               >
-                Deploy {plan.name}
+                {plan.price === "0" ? "Get Started" : "Select Plan"}
               </Button>
             </motion.div>
           ))}

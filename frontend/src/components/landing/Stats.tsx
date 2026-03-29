@@ -39,7 +39,7 @@ import { Database } from "lucide-react";
 
 export function Stats() {
   return (
-    <section className="relative py-24 bg-[#050505] overflow-hidden border-y border-white/5">
+    <section className="relative py-24 bg-[#020202] overflow-hidden border-y border-white/5">
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       
@@ -52,7 +52,7 @@ export function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="group relative flex flex-col p-8 rounded-[2rem] border border-white/5 bg-white/[0.02] backdrop-blur-3xl transition-all hover:border-primary/20 hover:bg-white/[0.04]"
+              className="group relative flex flex-col p-8 rounded-[2rem] border border-white/5 bg-white/[0.01] backdrop-blur-3xl transition-all hover:border-primary/20 hover:bg-white/[0.03]"
             >
               <div className="flex items-center justify-between mb-6">
                 <div className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-${stat.color}/10 text-${stat.color} glow-${stat.color} transition-transform group-hover:scale-110`}>

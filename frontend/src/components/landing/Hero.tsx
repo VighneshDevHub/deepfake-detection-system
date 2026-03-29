@@ -36,17 +36,10 @@ export function Hero() {
           Forensic Core v4.2.0 // Neural-Link: ACTIVE
         </div>
 
-        <h1 className="max-w-6xl text-6xl font-black tracking-tighter text-white sm:text-8xl lg:text-9xl leading-[0.85]">
-          EXPOSE THE <br />
-          <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-primary to-primary-dark drop-shadow-[0_0_30px_rgba(0,240,255,0.4)]">
-            SYNTHETIC
-            <motion.span 
-              animate={{ opacity: [1, 0.4, 1, 0.7, 1] }}
-              transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 4 }}
-              className="absolute inset-0 text-white/10 blur-sm pointer-events-none"
-            >
-              SYNTHETIC
-            </motion.span>
+        <h1 className="max-w-7xl text-5xl font-black tracking-tight text-white sm:text-7xl lg:text-8xl leading-[1.1] mb-10">
+          DEEPFAKE <br />
+          <span className="relative inline-block text-transparent bg-clip-text bg-gradient-to-b from-primary via-primary to-primary-dark drop-shadow-[0_0_30px_rgba(0,240,255,0.3)] uppercase">
+            DETECTION
           </span>
         </h1>
 
