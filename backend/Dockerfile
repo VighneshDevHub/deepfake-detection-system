@@ -24,4 +24,4 @@ RUN mkdir -p models
 ENV PORT=8000
 
 # Production server (IMPORTANT CHANGE)
-CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"]
+CMD ["sh", "-c", "python scripts/download_models.py && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 1"]
