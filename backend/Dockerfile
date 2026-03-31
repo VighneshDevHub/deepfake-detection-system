@@ -1,31 +1,27 @@
-# backend/Dockerfile
-
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# System dependencies for OpenCV and audio processing
+# System dependencies (optimized)
 RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
     libgomp1 \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies first (layer caching)
+# Install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# Copy code
 COPY . .
 
-# Create models directory
+# Create required dirs
 RUN mkdir -p models
 
-EXPOSE 8000
+# Dynamic port support
+ENV PORT=8000
 
-# Use gunicorn for production
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
+# Production server (IMPORTANT CHANGE)
+CMD ["sh", "-c", "gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"]
