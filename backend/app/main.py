@@ -14,7 +14,7 @@ from app.core.exceptions import (
     file_too_large_handler, unsupported_type_handler,
 )
 from app.services.inference    import inference_service
-from app.services.gradcam      import gradcam_service
+# from app.services.gradcam      import gradcam_service
 from app.services.face_detector import face_detector
 from app.routers import detection, health
 from app.routers import video
@@ -41,15 +41,19 @@ async def lifespan(app: FastAPI):
         logger.error(f"Unexpected error loading ONNX model: {e}")
 
     # 2. Grad-CAM PyTorch model
-    pth_path = Path(settings.gradcam_model_path)
-    if pth_path.exists():
-        gradcam_service.load(str(pth_path))
-        logger.info("Grad-CAM model loaded")
-    else:
-        logger.warning(
-            f"Grad-CAM model not found at {pth_path} — "
-            "explanations will be disabled"
-        )
+    # In lifespan(), replace the gradcam loading block with:
+    try:
+        from app.services.gradcam import gradcam_service
+        pth_path = Path(settings.gradcam_model_path)
+        if pth_path.exists():
+            gradcam_service.load(str(pth_path))
+            logger.info("Grad-CAM model loaded")
+        else:
+            logger.warning("Grad-CAM model not found — explanations disabled")
+    except ImportError:
+        logger.warning("PyTorch not available — Grad-CAM disabled")
+    except Exception as e:
+        logger.warning(f"Grad-CAM failed to load: {e}")
 
     # 3. Face detector
     try:
