@@ -27,7 +27,8 @@ class InferenceService:
 
         self._session = ort.InferenceSession(
             str(path),
-            providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
+            # providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
+            providers=["CPUExecutionProvider"],
         )
         input_name = self._session.get_inputs()[0].name
         logger.info(f"Model loaded from {path} | input: {input_name}")
