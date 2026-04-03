@@ -4,8 +4,6 @@ import base64
 import io
 import cv2
 import numpy as np
-import torch
-import torch.nn.functional as F
 from PIL import Image
 
 from app.core.logging import get_logger
@@ -30,8 +28,12 @@ class GradCAMService:
         Loads the PyTorch .pth checkpoint — separate from ONNX.
         Called once at startup alongside the ONNX model.
         """
-        import timm
-        import torch.nn as nn
+        try:
+            import torch
+            import torch.nn as nn
+            import timm
+        except ImportError:
+            raise ImportError("torch and timm required for Grad-CAM")
 
         class DeepfakeDetector(nn.Module):
             def __init__(self):
@@ -78,7 +80,9 @@ class GradCAMService:
     def _save_gradient(self, module, grad_input, grad_output):
         self._gradients = grad_output[0].detach()
 
-    def _compute_heatmap(self, image_tensor: torch.Tensor) -> tuple:
+    def _compute_heatmap(self, image_tensor) -> tuple:
+        import torch
+        import torch.nn.functional as F
         """
         Returns:
             heatmap     : (224, 224) float array 0-1
@@ -106,6 +110,7 @@ class GradCAMService:
         return cam, pred_class, confidence
 
     def _preprocess(self, file_bytes: bytes) -> tuple:
+        import torch
         """Returns (image_np uint8, image_tensor float32)."""
         MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
         STD  = np.array([0.229, 0.224, 0.225], dtype=np.float32)
