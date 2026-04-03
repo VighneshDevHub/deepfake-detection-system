@@ -13,10 +13,10 @@ import {
 } from "lucide-react";
 import { Badge } from "../ui/Badge";
 import { motion } from "framer-motion";
-import { VideoDetectionResponse } from "@/types";
+import { VideoDetectionResult } from "@/types";
 
 interface VideoResultProps {
-  result: VideoDetectionResponse;
+  result: VideoDetectionResult;
 }
 
 export function VideoResult({ result }: VideoResultProps) {
