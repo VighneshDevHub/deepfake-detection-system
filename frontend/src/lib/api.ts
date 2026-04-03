@@ -1,7 +1,7 @@
 import axios from "axios";
 import { DetectionResult, VideoDetectionResult } from "@/types";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 const API_PREFIX = "/api/v1";
 
 
@@ -25,7 +25,7 @@ api.interceptors.response.use(
       method: error.config?.method?.toUpperCase(),
     };
 
-    console.error("API Error Details:", errorDetails);
+     console.error("API Error Details:", errorDetails);
      console.error("Raw Error Object:", error);
      
      // Provide a more user-friendly error message if it's a network error

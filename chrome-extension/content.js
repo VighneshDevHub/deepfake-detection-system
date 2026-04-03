@@ -1,0 +1,216 @@
+// content.js - Content Script
+// Extracts images from the page and shows result overlays
+
+const SCAN_ATTR = "data-df-scanned";
+const overlayMap = new WeakMap(); // img element → overlay element
+
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg.type === "SCAN_PAGE") scanAllImages();
+  if (msg.type === "DETECT_FROM_CONTEXT_MENU") detectFromUrl(msg.srcUrl);
+});
+
+// Auto-scan if enabled
+chrome.runtime.sendMessage({ type: "GET_SETTINGS" }, (settings) => {
+  if (settings?.autoScan) scanAllImages();
+});
+
+// ── Scan all images on page ───────────────────────────────────────────────────
+function scanAllImages() {
+  const images = document.querySelectorAll(`img:not([${SCAN_ATTR}])`);
+  images.forEach((img) => {
+    if (img.naturalWidth >= 100 && img.naturalHeight >= 100) {
+      img.setAttribute(SCAN_ATTR, "pending");
+      analyzeImage(img);
+    }
+  });
+}
+
+// ── Analyze a single <img> element ───────────────────────────────────────────
+async function analyzeImage(img) {
+  showOverlay(img, { status: "loading" });
+
+  try {
+    const base64 = await imageElementToBase64(img);
+    const settings = await getSettings();
+
+    const result = await chrome.runtime.sendMessage({
+      type: "DETECT_IMAGE",
+      imageData: base64,
+      filename: filenameFromSrc(img.src),
+      threshold: settings.threshold,
+    });
+
+    img.setAttribute(SCAN_ATTR, result.error ? "error" : result.label);
+    showOverlay(img, { status: "done", result });
+  } catch (err) {
+    img.setAttribute(SCAN_ATTR, "error");
+    showOverlay(img, { status: "error", message: err.message });
+  }
+}
+
+// ── Detect from right-click context menu (by URL) ────────────────────────────
+async function detectFromUrl(srcUrl) {
+  // Find the matching img on page or create a virtual one
+  let img = document.querySelector(`img[src="${srcUrl}"]`);
+  if (!img) {
+    // Fetch and convert to base64 ourselves
+    try {
+      const res = await fetch(srcUrl);
+      const blob = await res.blob();
+      const base64 = await blobToBase64(blob);
+      const settings = await getSettings();
+
+      const result = await chrome.runtime.sendMessage({
+        type: "DETECT_IMAGE",
+        imageData: base64,
+        filename: filenameFromSrc(srcUrl),
+        threshold: settings.threshold,
+      });
+
+      showFloatingResult(result, srcUrl);
+    } catch (err) {
+      showFloatingResult({ error: err.message }, srcUrl);
+    }
+    return;
+  }
+  analyzeImage(img);
+}
+
+// ── Overlay rendering ─────────────────────────────────────────────────────────
+function showOverlay(img, state) {
+  // Ensure parent is positioned
+  const parent = img.parentElement;
+  if (!parent) return;
+  const parentPos = getComputedStyle(parent).position;
+  if (parentPos === "static") parent.style.position = "relative";
+
+  // Remove old overlay
+  let overlay = overlayMap.get(img);
+  if (overlay) overlay.remove();
+
+  overlay = document.createElement("div");
+  overlay.className = "df-overlay";
+
+  if (state.status === "loading") {
+    overlay.innerHTML = `<span class="df-badge df-loading"><span class="df-badge-dot"></span>Scanning…</span>`;
+  } else if (state.status === "error") {
+    overlay.innerHTML = `<span class="df-badge df-error"><span class="df-badge-dot"></span>Error</span>`;
+  } else if (state.status === "done") {
+    const r = state.result;
+    if (r.error) {
+      overlay.innerHTML = `<span class="df-badge df-error"><span class="df-badge-dot"></span>Error</span>`;
+    } else {
+      const cls = r.is_fake ? "df-fake" : "df-real";
+      const label = r.is_fake ? "FAKE" : "REAL";
+      overlay.innerHTML = `
+        <span class="df-badge ${cls}" title="${buildTooltip(r)}">
+          <span class="df-badge-dot"></span>${label} ${r.confidence.toFixed(1)}%
+        </span>`;
+    }
+  }
+
+  // Position overlay at top-left of image
+  overlay.style.cssText = `
+    position:absolute;
+    top:4px;
+    left:4px;
+    z-index:2147483647;
+    pointer-events:none;
+  `;
+
+  parent.appendChild(overlay);
+  overlayMap.set(img, overlay);
+}
+
+// Floating result panel for context-menu detections (no img element on page)
+function showFloatingResult(result, srcUrl) {
+  const existing = document.getElementById("df-float-panel");
+  if (existing) existing.remove();
+
+  const panel = document.createElement("div");
+  panel.id = "df-float-panel";
+
+  if (result.error) {
+    panel.className = "df-float df-error-theme";
+    panel.innerHTML = `
+      <div class="df-float-header">
+        Deepfake Detector
+        <button id="df-close-float">✕</button>
+      </div>
+      <div class="df-float-body">⚠ ${result.error}</div>`;
+  } else {
+    const isFake = result.is_fake;
+    panel.className = `df-float ${isFake ? "df-fake" : "df-real"}`;
+    panel.innerHTML = `
+      <div class="df-float-header">
+        Deepfake Detector
+        <button id="df-close-float">✕</button>
+      </div>
+      <div class="df-float-body">
+        <div class="df-float-verdict">
+          <div class="df-float-icon">${isFake ? "🚨" : "✅"}</div>
+          <span>${isFake ? "DEEPFAKE" : "AUTHENTIC"}</span>
+        </div>
+        <div class="df-float-bar-track">
+          <div class="df-float-bar-fill" style="width:${result.confidence.toFixed(1)}%"></div>
+        </div>
+        <div class="df-float-meta">${buildTooltip(result)}</div>
+      </div>`;
+  }
+
+  document.body.appendChild(panel);
+  document.getElementById("df-close-float")?.addEventListener("click", () => panel.remove());
+  setTimeout(() => panel.remove(), 8000);
+}
+
+function buildTooltip(r) {
+  let tip = `Real: ${r.real_prob?.toFixed(1)}% | Fake: ${r.fake_prob?.toFixed(1)}%`;
+  if (r.face_warning) tip += ` | ⚠ ${r.face_warning}`;
+  return tip;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function imageElementToBase64(img) {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext("2d");
+    try {
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL("image/jpeg", 0.92));
+    } catch {
+      // Cross-origin: fetch via URL instead
+      fetch(img.src)
+        .then((r) => r.blob())
+        .then(blobToBase64)
+        .then(resolve)
+        .catch(reject);
+    }
+  });
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function filenameFromSrc(src) {
+  try {
+    const url = new URL(src);
+    return url.pathname.split("/").pop() || "image.jpg";
+  } catch {
+    return "image.jpg";
+  }
+}
+
+function getSettings() {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage({ type: "GET_SETTINGS" }, resolve);
+  });
+}
