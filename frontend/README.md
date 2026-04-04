@@ -1,69 +1,49 @@
-# DeepFakeDetect: Forensic Dashboard (Next.js)
+# 📊 DFFS Dashboard: Forensic Interface
 
-The frontend for DeepFakeDetect is a premium, cybersecurity-first dashboard built with Next.js 15+ and Tailwind CSS 4. It provides a highly interactive and intuitive interface for media analysis.
+The **DFFS Dashboard** is a high-performance Next.js application that provides a beautiful, responsive, and intuitive interface for deepfake analysis. It is designed for forensic investigators and cybersecurity professionals.
 
-## 🚀 Key Features
+## ✨ Features
 
-- **Cybersecurity Theme**: Dark-mode-first design with electric cyan and glassmorphism.
-- **Forensic Analyzer**: Advanced media uploader with real-time progress and visual feedback.
-- **Interactive Heatmaps**: Dynamic Grad-CAM region activation viewer for images.
-- **Video Breakdown**: Frame-by-frame analysis with temporal consistency scoring.
-- **Data Archive**: LocalStorage-based scan history for quick retrieval.
-- **Responsive Interface**: Fully optimized for desktop, tablet, and mobile forensics.
+- **🛡️ Forensic Theme**: A modern, dark-mode dashboard built with Glassmorphism and Tailwind CSS 4.
+- **🖼️ Real-Time Detection**: Upload images or videos for instant analysis with progress tracking.
+- **🧠 Visual Explainability**: View Grad-CAM heatmaps to understand which facial regions are suspicious.
+- **🎬 Video Analysis**: Comprehensive breakdown of video frames with temporal consistency reports.
+- **📈 History & Stats**: Keep track of previous detections and view overall system performance.
+- **⚡ Next-Gen Performance**: Built with Next.js 15 and Framer Motion for smooth, high-speed interactions.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15+ (App Router)
-- **Library**: React 19
-- **Styling**: Tailwind CSS 4
-- **Animations**: Framer Motion
-- **Icons**: Lucide React
-- **API Client**: Axios
+- **Framework**: `Next.js 15` (App Router)
+- **Language**: `TypeScript`
+- **Styling**: `Tailwind CSS 4`, `Framer Motion`
+- **Icons**: `Lucide React`
+- **State Management**: `React Hooks`
+
+## 🚦 Installation & Usage
+
+### 1. Install Dependencies
+```bash
+pnpm install
+```
+
+### 2. Set Up Environment Variables
+Create a `.env.local` file with:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+### 3. Run Development Server
+```bash
+pnpm dev
+```
 
 ## 📂 Project Structure
 
-```
-frontend/src/
-├── app/
-│   ├── (auth)/         # Sign-in & Sign-up pages
-│   ├── (dashboard)/    # Core analyzer, history, and settings
-│   └── page.tsx        # Hero landing page
-├── components/
-│   ├── ui/             # Core primitives (Button, Input, etc.)
-│   ├── landing/        # Landing page sections
-│   ├── dashboard/      # Layout and overview components
-│   └── detection/      # Specialized forensic components
-└── lib/
-    ├── api.ts          # Backend API integration
-    └── utils.ts        # Helper functions
-```
+- `src/app`: Next.js App Router pages and layouts.
+- `src/components`: Reusable UI components (Dashboard, Detection, Landing, Layout, Shared, UI).
+- `src/hooks`: Custom React hooks for API calls and state.
+- `src/lib`: Utility functions and API clients.
+- `src/types`: TypeScript definitions.
 
-## 🏁 Setup & Execution
-
-1.  **Environment Variables**: Create `frontend/.env.local`:
-
-    ```env
-    NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
-    ```
-
-2.  **Installation**:
-
-    ```bash
-    pnpm install
-    ```
-
-3.  **Execution**:
-
-    ```bash
-    pnpm dev
-    ```
-
-4.  **Production Build**:
-    ```bash
-    pnpm build
-    pnpm start
-    ```
-
-## ⚖️ Forensic Disclaimer
-
-This dashboard provides high-confidence forensic data but is not infallible. Results should be cross-verified using other investigative techniques.
+---
+<p align="center">🛡️ <b>DeepFake Forensic System</b> - Frontend Module</p>

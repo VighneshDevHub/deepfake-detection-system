@@ -1,53 +1,59 @@
-# DeepFakeDetect: Forensic Backend Engine
+# ⚙️ DFFS Backend: Forensic Engine
 
-The backend for DeepFakeDetect is a high-performance FastAPI service designed for real-time media forensics. It integrates face extraction and ONNX-optimized model inference.
+The **DFFS Backend** is a high-performance FastAPI service designed for real-time media forensics. It serves as the bridge between the user interfaces (Dashboard & Chrome Extension) and the Deep Learning models.
 
-## ⚙️ Core Components
+## 🚀 Key Features
 
-- **FastAPI Gateway**: Asynchronous REST API with automatic documentation.
-- **MTCNN Face Detector**: Reliable face localization and alignment for forensic analysis.
-- **ONNX Runtime Engine**: Hardware-accelerated inference for the EfficientNet-B4 backbone.
-- **Grad-CAM Explainer**: Real-time generation of base64-encoded activation heatmaps.
-- **Video Temporal Service**: Evenly spaced frame extraction and multi-frame analysis.
+- **⚡ High-Performance Inference**: Optimized for speed using ONNX Runtime.
+- **🖼️ Face Extraction**: Integrated MTCNN detector for precise face localization and alignment.
+- **🎬 Video Processing**: Intelligent frame extraction and temporal consistency analysis.
+- **🧠 Grad-CAM Support**: Generates visual heatmaps for explainable detection.
+- **🛡️ Secure & Scalable**: Asynchronous request handling with automatic OpenAPI documentation.
 
-## 🚀 API Endpoints
+## 🛠️ Tech Stack
 
-| Method | Endpoint               | Description                                           |
-| ------ | ---------------------- | ----------------------------------------------------- |
-| `GET`  | `/`                    | Root — service and version information                |
-| `GET`  | `/api/v1/health`       | Health Check — verifies model loading status          |
-| `POST` | `/api/v1/detect/image` | Image Scan — returns verdict, confidence, and heatmap |
-| `POST` | `/api/v1/detect/video` | Video Scan — returns verdict and per-frame breakdown  |
+- **Framework**: `FastAPI`
+- **Inference**: `ONNX Runtime`
+- **Computer Vision**: `OpenCV`, `MTCNN`
+- **Deep Learning**: `PyTorch` (for Grad-CAM)
+- **Language**: `Python 3.9+`
 
-## 🛠️ Environment Variables
+## 📖 API Documentation
 
-Configure these in `backend/.env`:
+Once the server is running, you can access the interactive documentation at:
+- **Swagger UI**: `http://localhost:8000/docs`
+- **ReDoc**: `http://localhost:8000/redoc`
 
-```env
-APP_NAME="DeepFakeDetect"
-DEBUG=True
-MAX_FILE_SIZE_BYTES=52428800 # 50MB
-MODEL_PATH="app/models/best_model.onnx"
-GRADCAM_MODEL_PATH="app/models/best_model.pth"
+### Primary Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/detect/image` | Analyze an image file for deepfake signatures. |
+| `POST` | `/api/v1/detect/video` | Perform temporal analysis on a video file. |
+| `GET` | `/api/v1/health` | Check the health of the service and model loading status. |
+
+## 🚦 Installation & Usage
+
+### 1. Install Dependencies
+```bash
+pip install -r requirements.txt
 ```
 
-## 📦 Setup & Execution
+### 2. Download Models
+```bash
+python scripts/download_models.py
+```
 
-1.  **Installation**:
+### 3. Run the Server
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+## 📂 Structure
+- `app/core`: Configuration and logging.
+- `app/routers`: API endpoint definitions.
+- `app/services`: Business logic (Inference, Video Processing, Grad-CAM).
+- `app/schemas`: Pydantic models for request/response validation.
 
-2.  **Execution**:
-
-    ```bash
-    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-    ```
-
-3.  **Documentation**:
-    Navigate to `http://localhost:8000/docs` to view the interactive API playground.
-
-## ⚖️ Forensic Disclaimer
-
-This backend provides high-confidence forensic data but is not infallible. Results should be cross-verified using other investigative techniques.
+---
+<p align="center">🛡️ <b>DeepFake Forensic System</b> - Backend Module</p>

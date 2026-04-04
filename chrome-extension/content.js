@@ -11,7 +11,7 @@ chrome.runtime.onMessage.addListener((msg) => {
 });
 
 // Auto-scan if enabled
-chrome.runtime.sendMessage({ type: "GET_SETTINGS" }, (settings) => {
+getSettings().then((settings) => {
   if (settings?.autoScan) scanAllImages();
 });
 
@@ -31,19 +31,34 @@ async function analyzeImage(img) {
   showOverlay(img, { status: "loading" });
 
   try {
-    const base64 = await imageElementToBase64(img);
     const settings = await getSettings();
+    let result;
 
-    const result = await chrome.runtime.sendMessage({
-      type: "DETECT_IMAGE",
-      imageData: base64,
-      filename: filenameFromSrc(img.src),
-      threshold: settings.threshold,
-    });
+    try {
+      // Try local canvas capture first (fastest, no extra network)
+      const base64 = await imageElementToBase64(img);
+      result = await safeRuntimeSendMessage({
+        type: "DETECT_IMAGE",
+        imageData: base64,
+        filename: filenameFromSrc(img.src),
+        threshold: settings.threshold,
+      });
+    } catch (err) {
+      // Fallback: Ask background script to fetch and analyze via URL (bypasses CORS)
+      console.log("Canvas failed, falling back to background fetch for:", img.src);
+      result = await safeRuntimeSendMessage({
+        type: "DETECT_IMAGE_FROM_URL",
+        srcUrl: img.src,
+        threshold: settings.threshold,
+      });
+    }
 
-    img.setAttribute(SCAN_ATTR, result.error ? "error" : result.label);
+    if (!result || result.error) throw new Error(result?.error || "No response from background script");
+
+    img.setAttribute(SCAN_ATTR, result.is_fake ? "FAKE" : "REAL");
     showOverlay(img, { status: "done", result });
   } catch (err) {
+    console.error("Analysis failed:", err);
     img.setAttribute(SCAN_ATTR, "error");
     showOverlay(img, { status: "error", message: err.message });
   }
@@ -51,30 +66,19 @@ async function analyzeImage(img) {
 
 // ── Detect from right-click context menu (by URL) ────────────────────────────
 async function detectFromUrl(srcUrl) {
-  // Find the matching img on page or create a virtual one
-  let img = document.querySelector(`img[src="${srcUrl}"]`);
-  if (!img) {
-    // Fetch and convert to base64 ourselves
-    try {
-      const res = await fetch(srcUrl);
-      const blob = await res.blob();
-      const base64 = await blobToBase64(blob);
-      const settings = await getSettings();
-
-      const result = await chrome.runtime.sendMessage({
-        type: "DETECT_IMAGE",
-        imageData: base64,
-        filename: filenameFromSrc(srcUrl),
-        threshold: settings.threshold,
-      });
-
-      showFloatingResult(result, srcUrl);
-    } catch (err) {
-      showFloatingResult({ error: err.message }, srcUrl);
-    }
-    return;
+  const settings = await getSettings();
+  try {
+    const result = await safeRuntimeSendMessage({
+      type: "DETECT_IMAGE_FROM_URL",
+      srcUrl: srcUrl,
+      threshold: settings.threshold,
+    });
+    
+    if (!result || result.error) throw new Error(result?.error || "No response from background script");
+    showFloatingResult(result, srcUrl);
+  } catch (err) {
+    showFloatingResult({ error: err.message }, srcUrl);
   }
-  analyzeImage(img);
 }
 
 // ── Overlay rendering ─────────────────────────────────────────────────────────
@@ -130,38 +134,50 @@ function showFloatingResult(result, srcUrl) {
 
   const panel = document.createElement("div");
   panel.id = "df-float-panel";
+  panel.setAttribute("role", "alert");
+  panel.setAttribute("aria-live", "polite");
 
-  if (result.error) {
+  if (!result || result.error) {
+    const errorMsg = result?.error || "Unknown error occurred";
     panel.className = "df-float df-error-theme";
     panel.innerHTML = `
       <div class="df-float-header">
         Deepfake Detector
-        <button id="df-close-float">✕</button>
+        <button id="df-close-float" aria-label="Close Notification">✕</button>
       </div>
-      <div class="df-float-body">⚠ ${result.error}</div>`;
+      <div class="df-float-body">
+        <div class="df-float-verdict" style="color:#fca5a5">
+          <div class="df-float-icon">⚠️</div>
+          <span>Analysis Error</span>
+        </div>
+        <div class="df-float-meta">${errorMsg}</div>
+      </div>`;
   } else {
     const isFake = result.is_fake;
     panel.className = `df-float ${isFake ? "df-fake" : "df-real"}`;
     panel.innerHTML = `
       <div class="df-float-header">
         Deepfake Detector
-        <button id="df-close-float">✕</button>
+        <button id="df-close-float" aria-label="Close Notification">✕</button>
       </div>
       <div class="df-float-body">
         <div class="df-float-verdict">
-          <div class="df-float-icon">${isFake ? "🚨" : "✅"}</div>
+          <div class="df-float-icon">${isFake ? "🚨" : "🛡️"}</div>
           <span>${isFake ? "DEEPFAKE" : "AUTHENTIC"}</span>
         </div>
         <div class="df-float-bar-track">
           <div class="df-float-bar-fill" style="width:${result.confidence.toFixed(1)}%"></div>
         </div>
-        <div class="df-float-meta">${buildTooltip(result)}</div>
+        <div class="df-float-meta">
+          <div>Confidence: ${result.confidence.toFixed(1)}%</div>
+          <div>${buildTooltip(result)}</div>
+        </div>
       </div>`;
   }
 
   document.body.appendChild(panel);
   document.getElementById("df-close-float")?.addEventListener("click", () => panel.remove());
-  setTimeout(() => panel.remove(), 8000);
+  setTimeout(() => panel.remove(), 10000);
 }
 
 function buildTooltip(r) {
@@ -180,13 +196,8 @@ function imageElementToBase64(img) {
     try {
       ctx.drawImage(img, 0, 0);
       resolve(canvas.toDataURL("image/jpeg", 0.92));
-    } catch {
-      // Cross-origin: fetch via URL instead
-      fetch(img.src)
-        .then((r) => r.blob())
-        .then(blobToBase64)
-        .then(resolve)
-        .catch(reject);
+    } catch (err) {
+      reject(new Error("Canvas capture failed (CORS)"));
     }
   });
 }
@@ -211,6 +222,28 @@ function filenameFromSrc(src) {
 
 function getSettings() {
   return new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: "GET_SETTINGS" }, resolve);
+    safeRuntimeSendMessage({ type: "GET_SETTINGS" }).then((res) => {
+      if (res.error) {
+        resolve({ apiUrl: "http://localhost:8000", threshold: 0.5, autoScan: false });
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+function safeRuntimeSendMessage(message) {
+  return new Promise((resolve) => {
+    try {
+      chrome.runtime.sendMessage(message, (res) => {
+        if (chrome.runtime.lastError) {
+          resolve({ error: "Extension service worker inactive. Please try again." });
+        } else {
+          resolve(res);
+        }
+      });
+    } catch (e) {
+      resolve({ error: "Extension context invalidated. Please refresh the page." });
+    }
   });
 }

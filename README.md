@@ -1,79 +1,101 @@
-# DeepFakeDetect: Premium AI Forensic System
+# 🛡️ DeepFake Forensic System (DFFS)
 
-![DeepFakeDetect Banner](https://img.shields.io/badge/DEEPFAKE-DETECT-00F0FF?style=for-the-badge&logo=shield&logoColor=white)
+<p align="center">
+  <img src="./docs/Stage1.png" alt="DeepFakeDetect Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);">
+</p>
 
-DeepFakeDetect is a production-grade, end-to-end forensic system designed to identify AI-generated manipulations in images and videos. Powered by EfficientNet-B4 and Grad-CAM explainability, it provides high-accuracy detection with visual evidence.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Production-success?style=for-the-badge&logo=rocket&logoColor=white" alt="Status">
+  <img src="https://img.shields.io/badge/Security-Forensic-red?style=for-the-badge&logo=shield&logoColor=white" alt="Security">
+  <img src="https://img.shields.io/badge/Tech-AI--Powered-blue?style=for-the-badge&logo=openai&logoColor=white" alt="Tech">
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge" alt="License">
+</p>
 
-## 🏗️ Architecture Overview
+---
+
+**DeepFake Forensic System (DFFS)** is a production-grade, end-to-end cybersecurity solution designed to identify AI-generated manipulations in images and videos. Utilizing state-of-the-art **EfficientNet-B4** architectures and **Grad-CAM explainability**, it provides high-accuracy detection coupled with visual forensic evidence.
+
+## ✨ Core Features
+
+- 🔍 **Advanced Image Analysis**: Detect manipulations in JPEG, PNG, and WebP with high precision.
+- 🎬 **Temporal Video Scanning**: Frame-by-frame analysis of MP4, AVI, and MOV files to identify temporal inconsistencies.
+- 🧠 **Explainable AI (XAI)**: Visual Grad-CAM heatmaps highlight manipulated facial regions for human verification.
+- 🌐 **Chrome Extension**: Real-time detection on any webpage with right-click "Detect" and auto-scan capabilities.
+- 📊 **Forensic Dashboard**: Beautifully designed Next.js dashboard with history, stats, and detailed reports.
+- 🔒 **Privacy First**: All processing is done in-memory; your media is never stored on our servers.
+
+## 🏗️ System Architecture
 
 ```mermaid
 graph TD
-    User((User)) -->|Upload Media| Frontend[Next.js 15 Dashboard]
-    Frontend -->|REST API| Backend[FastAPI Gateway]
+    User((User)) -->|Upload Media| Frontend[Next.js Dashboard]
+    User -->|Browse Web| Extension[Chrome Extension]
+    Frontend -->|REST API| Backend[FastAPI Engine]
+    Extension -->|REST API| Backend
 
-    subgraph "Backend Processing"
-        Backend -->|Face Extraction| MTCNN[MTCNN Face Detector]
-        MTCNN -->|Cropped Faces| Inference[ONNX Runtime Engine]
+    subgraph "Deep Analysis Engine"
+        Backend -->|Face Extraction| MTCNN[MTCNN Detector]
+        MTCNN -->|Cropped Faces| Inference[ONNX Runtime]
         Inference -->|EfficientNet-B4| Prediction[Verdict & Confidence]
-        Prediction -->|Grad-CAM| XAI[Explanation Heatmap]
+        Prediction -->|Grad-CAM| XAI[Heatmap Generation]
     end
 
-    XAI -->|Base64 Data| Backend
-    Backend -->|JSON Response| Frontend
-    Frontend -->|Visual Report| User
+    XAI -->|Result JSON| Backend
+    Backend -->|Visual Report| Frontend
+    Backend -->|Overlay Data| Extension
 ```
 
-## 🚀 Key Features
+## 🛠️ Technical Stack
 
-- **Cybersecurity-First Design**: Dark-mode forensic theme with glassmorphism and animated interfaces.
-- **EfficientNet-B4 Backbone**: State-of-the-art CNN architecture for high-precision feature extraction.
-- **Multi-Format Support**: Deep analysis for JPEG, PNG, MP4, AVI, and MOV files.
-- **Grad-CAM Explanations**: Visual heatmaps showing exactly which facial regions influenced the decision.
-- **Video Temporal Scan**: Frame-by-frame analysis to detect consistency errors across time.
-- **Privacy-Centric**: Media is processed in-memory and discarded immediately after analysis.
+| Component | Technology | Description |
+| :--- | :--- | :--- |
+| **Frontend** | `Next.js 15`, `Tailwind 4`, `Framer Motion` | Modern, responsive forensic interface. |
+| **Backend** | `FastAPI`, `ONNX Runtime`, `OpenCV` | High-performance inference gateway. |
+| **Extension** | `Chrome Manifest V3`, `Vanilla JS` | Real-time web-integrated protection. |
+| **ML Engine** | `EfficientNet-B4`, `PyTorch`, `MTCNN` | SOTA deepfake detection backbone. |
 
-## 🛠️ Tech Stack
+## 🚀 Quick Start
 
-| Module       | Technologies                                                      |
-| ------------ | ----------------------------------------------------------------- |
-| **Frontend** | Next.js 15, React 19, Tailwind CSS 4, Framer Motion, Lucide React |
-| **Backend**  | FastAPI, ONNX Runtime, OpenCV, MTCNN, PyTorch                     |
-| **ML**       | EfficientNet-B4, timm, albumentations, PyTorch                    |
+### 📋 Prerequisites
+- **Node.js 18+** & `pnpm`
+- **Python 3.9+**
+- **CUDA-enabled GPU** (Recommended for video analysis)
 
-## 🏁 Quick Start
-
-### Prerequisites
-
-- Node.js 18+ & pnpm
-- Python 3.9+
-- CUDA-enabled GPU (optional, for faster ML inference)
-
-### 1. Backend Setup
-
+### 1️⃣ Backend Setup
 ```bash
 cd backend
 pip install -r requirements.txt
+python scripts/download_models.py
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### 2. Frontend Setup
-
+### 2️⃣ Frontend Setup
 ```bash
 cd frontend
 pnpm install
 pnpm dev
 ```
 
-### 3. Access
+### 3️⃣ Chrome Extension Setup
+1. Open Chrome and navigate to `chrome://extensions/`
+2. Enable **Developer mode** (top right)
+3. Click **Load unpacked** and select the `chrome-extension` folder.
 
-Open `http://localhost:3000` to access the forensic dashboard.
+---
 
-## 📄 Documentation
+## 📂 Project Structure
 
-- [Backend Forensics](./backend/README.md)
-- [Frontend Interface](./frontend/README.md)
-- [ML Pipeline & Training](./ml/README.md)
+- **[`backend`](./backend)**: FastAPI service handling ML inference and API requests.
+- **[`frontend`](./frontend)**: Next.js dashboard for user interactions and reports.
+- **[`chrome-extension`](./chrome-extension)**: Browser extension for on-the-go detection.
+- **[`ml`](./ml)**: Machine learning pipeline, training scripts, and model exports.
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) (coming soon) for more details.
 
 ## ⚖️ License
 
-MIT License. See [LICENSE](LICENSE) for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
