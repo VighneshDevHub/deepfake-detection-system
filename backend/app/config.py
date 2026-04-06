@@ -27,8 +27,17 @@ class Settings(BaseSettings):
     # CORS
     allowed_origins: str = "http://localhost:3000,http://127.0.0.1:3000"
 
+    # Database
+    database_url: str = ""
+
+    # Auth
+    secret_key: str = "57fe9143d17e33d928b7632e...435e735d54df2b1ea2ff310" # Default from error if needed, but usually empty
+    algorithm: str = "HS256"
+    access_token_expire_days: int = 7
+
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
     @property
     def max_file_size_bytes(self) -> int:

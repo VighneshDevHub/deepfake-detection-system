@@ -18,6 +18,11 @@ from app.services.inference    import inference_service
 from app.services.face_detector import face_detector
 from app.routers import detection, health
 from app.routers import video
+from app.database import engine, Base
+from app.routers import auth as auth_router
+
+# Import models so Base knows about them
+from app.models import user, detection_history  # noqa
 
 
 logger   = get_logger(__name__)
@@ -62,7 +67,17 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Face detector failed to load: {e}")
 
+
+# 4. Initialize Database (MVP approach)
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables ready")
+    except Exception as e:
+        logger.warning(f"Database unavailable: {e}")
+
+
     logger.info("Server ready")
+    
     yield
     # ── SHUTDOWN ──────────────────────────────────────────────────────
     logger.info("Shutting down")
@@ -91,6 +106,7 @@ app.add_exception_handler(UnsupportedFileTypeError, unsupported_type_handler)
 app.include_router(health.router,    prefix="/api/v1")
 app.include_router(detection.router, prefix="/api/v1")
 app.include_router(video.router, prefix="/api/v1")
+app.include_router(auth_router.router, prefix="/api/v1")
 
 
 
