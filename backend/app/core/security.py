@@ -1,5 +1,6 @@
 # backend/app/core/security.py
 
+import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
@@ -11,11 +12,16 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    # Step 1: Normalize (removes bcrypt 72-byte limit issue)
+    hashed = hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+    return pwd_context.hash(hashed)
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    # Normalize before verification
+    plain_hashed = hashlib.sha256(plain.encode("utf-8")).hexdigest()
+    return pwd_context.verify(plain_hashed, hashed)
 
 
 def create_access_token(data: dict, expires: Optional[timedelta] = None) -> str:
