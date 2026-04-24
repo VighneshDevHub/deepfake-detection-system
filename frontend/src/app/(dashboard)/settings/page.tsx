@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import { 
-  Settings, 
-  ShieldCheck, 
   Zap, 
   Lock, 
   Bell, 
@@ -17,6 +15,7 @@ import {
   Calendar
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ThresholdSlider } from "@/components/ui/ThresholdSlider";
@@ -96,7 +95,13 @@ export default function SettingsPage() {
                   <div className="relative">
                     <div className="h-32 w-32 overflow-hidden rounded-[2.5rem] border-2 border-primary/20 bg-zinc-800 p-1">
                       {avatarUrl ? (
-                        <img src={avatarUrl} alt={displayName} className="h-full w-full rounded-[2.2rem] object-cover" />
+                        <Image 
+                          src={avatarUrl} 
+                          alt={displayName} 
+                          width={128}
+                          height={128}
+                          className="h-full w-full rounded-[2.2rem] object-cover" 
+                        />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center rounded-[2.2rem] bg-zinc-900 text-4xl font-black text-primary">
                           {displayName[0]}

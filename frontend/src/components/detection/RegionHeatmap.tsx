@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Info, Layers, Zap } from "lucide-react";
 import { Badge } from "../ui/Badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 import { RegionActivation } from "@/types";
 
@@ -139,5 +140,3 @@ export function RegionHeatmap({
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

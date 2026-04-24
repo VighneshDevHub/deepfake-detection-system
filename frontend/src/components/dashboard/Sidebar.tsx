@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { 
   LayoutDashboard, 
   Image as ImageIcon,
@@ -33,7 +34,6 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { avatarUrl, displayName, email, initials, roleLabel } = useCurrentUser();
   const [isSigningOut, setIsSigningOut] = React.useState(false);
 
@@ -89,9 +89,11 @@ export function Sidebar() {
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-zinc-800 text-zinc-400">
                 {avatarUrl ? (
-                  <img
+                  <Image
                     src={avatarUrl}
                     alt={displayName}
+                    width={44}
+                    height={44}
                     className="h-full w-full object-cover"
                   />
                 ) : (

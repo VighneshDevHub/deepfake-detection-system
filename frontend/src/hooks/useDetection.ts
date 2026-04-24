@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import { detectImage } from "@/lib/api";
 import { DetectionResult } from "@/types";
 import { toast } from "react-hot-toast";
@@ -18,7 +19,10 @@ export function useDetection() {
       toast.success("Image forensics complete.", { id: toastId });
       return data;
     } catch (error: unknown) {
-      const errorMessage = (error as any)?.response?.data?.detail || "Scan failed.";
+      let errorMessage = "Scan failed.";
+      if (axios.isAxiosError(error) && error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
       toast.error(errorMessage, { id: toastId });
       throw error;
     } finally {

@@ -8,7 +8,6 @@ import {
   Video, 
   AlertCircle, 
   CheckCircle2, 
-  MoreVertical,
   Download,
   Trash2,
   Loader2

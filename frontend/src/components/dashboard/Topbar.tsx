@@ -2,6 +2,7 @@
 
 import React from "react";
 import { Bell, Search, User, Zap } from "lucide-react";
+import Image from "next/image";
 import { Button } from "../ui/Button";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -42,9 +43,11 @@ export function Topbar() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 border border-white/5 text-zinc-400">
               {avatarUrl ? (
                 // Render the user avatar from the auth provider when available.
-                <img
+                <Image
                   src={avatarUrl}
                   alt={displayName}
+                  width={40}
+                  height={40}
                   className="h-full w-full rounded-xl object-cover"
                 />
               ) : initials ? (

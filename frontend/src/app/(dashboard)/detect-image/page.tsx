@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import axios from "axios";
 import { 
   ShieldCheck, 
   Image as ImageIcon, 
@@ -46,7 +47,10 @@ export default function DetectImagePage() {
       saveToHistory(result, "image");
     } catch (error: unknown) {
       console.error(error);
-      const errorMessage = (error as any)?.response?.data?.detail || "Scan failed. Please check network connectivity.";
+      let errorMessage = "Scan failed. Please check network connectivity.";
+      if (axios.isAxiosError(error) && error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      }
       toast.error(errorMessage, { id: toastId });
     } finally {
       setIsLoading(false);

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import { useDropzone, Accept } from "react-dropzone";
-import { Upload, X, File, Video, Image as ImageIcon, ShieldAlert } from "lucide-react";
+import { X, File, Video, Image as ImageIcon, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/Button";
 

@@ -5,8 +5,7 @@ import {
   FileText, 
   Construction,
   Clock,
-  ArrowLeft,
-  Search
+  ArrowLeft
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
