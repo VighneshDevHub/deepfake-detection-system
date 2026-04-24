@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, Github, Menu, X, Image as ImageIcon, Film, Mic, FileText } from "lucide-react";
+import { LayoutDashboard, Menu, X, Image as ImageIcon, Film, Mic, FileText } from "lucide-react";
 import { Button } from "../ui/Button";
 import { Logo } from "../shared/Logo";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useCurrentUser();
 
   const navLinks = [
     { name: "Image", href: "/detect-image", icon: ImageIcon },
@@ -33,32 +35,44 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80"
-          >
-            <LayoutDashboard size={16} />
-            Dashboard
-          </Link>
+          {user && (
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80"
+            >
+              <LayoutDashboard size={16} />
+              Dashboard
+            </Link>
+          )}
         </nav>
 
         <div className="flex items-center gap-4">
           <div className="hidden sm:flex items-center gap-2">
             <Link href="https://github.com" target="_blank">
               <Button variant="ghost" size="icon" className="rounded-full text-zinc-400">
-                <Github size={20} />
+                <span className="font-bold">GH</span>
               </Button>
             </Link>
-            <Link href="/sign-in">
-              <Button variant="outline" size="sm" className="rounded-full border-white/10 px-6 font-bold text-white hover:bg-white/5">
-                Log In
-              </Button>
-            </Link>
-            <Link href="/sign-up">
-              <Button size="sm" className="rounded-full bg-primary font-black text-background-dark hover:bg-primary/90 glow-primary">
-                Get Started
-              </Button>
-            </Link>
+            {!user ? (
+              <>
+                <Link href="/sign-in">
+                  <Button variant="outline" size="sm" className="rounded-full border-white/10 px-6 font-bold text-white hover:bg-white/5">
+                    Log In
+                  </Button>
+                </Link>
+                <Link href="/sign-up">
+                  <Button size="sm" className="rounded-full bg-primary font-black text-background-dark hover:bg-primary/90 glow-primary">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <Link href="/dashboard">
+                <Button size="sm" className="rounded-full bg-primary font-black text-background-dark hover:bg-primary/90 glow-primary px-6">
+                  Dashboard
+                </Button>
+              </Link>
+            )}
           </div>
 
           <button
@@ -91,21 +105,41 @@ export function Navbar() {
                   {link.name}
                 </Link>
               ))}
-              <Link
-                href="/dashboard"
-                className="text-lg font-medium text-primary"
-                onClick={() => setIsOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <div className="flex flex-col gap-2 pt-4">
-                <Link href="/sign-in">
-                  <Button variant="outline" className="w-full">Log In</Button>
+              {user && (
+                <Link
+                  href="/dashboard"
+                  className="text-lg font-medium text-primary"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
                 </Link>
-                <Link href="/sign-up">
-                  <Button className="w-full bg-primary text-background-dark">Get Started</Button>
+              )}
+              {!user ? (
+                <>
+                  <Link
+                    href="/sign-in"
+                    className="text-lg font-medium text-white"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="text-lg font-medium text-primary"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  href="/dashboard"
+                  className="text-lg font-medium text-white"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Go to Dashboard
                 </Link>
-              </div>
+              )}
             </div>
           </motion.div>
         )}

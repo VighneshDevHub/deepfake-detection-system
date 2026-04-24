@@ -10,21 +10,38 @@ import {
   CheckCircle2, 
   MoreVertical,
   Download,
-  Trash2
+  Trash2,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import { getHistory, HistoryItem } from "@/lib/api";
 
 export default function HistoryPage() {
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchHistoryData = async (pageNum: number) => {
+    setIsLoading(true);
+    try {
+      const data = await getHistory(pageNum, 10);
+      setHistory(data.items);
+      setTotalPages(data.total_pages);
+    } catch (error) {
+      console.error("Failed to fetch history:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const savedHistory = JSON.parse(localStorage.getItem("detection_history") || "[]");
-    setHistory(savedHistory);
-  }, []);
+    fetchHistoryData(page);
+  }, [page]);
 
   const clearHistory = () => {
-    localStorage.removeItem("detection_history");
+    // Backend doesn't have a clear history endpoint yet, but we can mock it locally for UI
     setHistory([]);
   };
 
@@ -74,7 +91,12 @@ export default function HistoryPage() {
           </div>
         </div>
 
-        {history.length === 0 ? (
+        {isLoading ? (
+          <div className="p-24 text-center">
+            <Loader2 className="mx-auto mb-6 animate-spin text-primary" size={40} />
+            <h3 className="text-xl font-black text-white uppercase tracking-tighter">RETRIEVING ARCHIVES...</h3>
+          </div>
+        ) : history.length === 0 ? (
           <div className="p-24 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-white/5 text-zinc-800">
               <History size={40} />
@@ -97,7 +119,7 @@ export default function HistoryPage() {
               <tbody className="divide-y divide-white/5">
                 {history.map((det, i) => (
                   <motion.tr 
-                    key={det.id} 
+                    key={det.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
@@ -106,46 +128,73 @@ export default function HistoryPage() {
                     <td className="py-6 pl-8">
                       <div className="flex items-center gap-4">
                         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-zinc-400 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
-                          {det.type === "image" ? <FileText size={20} /> : <Video size={20} />}
+                          {det.media_type === "image" ? <FileText size={20} /> : <Video size={20} />}
                         </div>
                         <div>
-                          <p className="text-sm font-black text-white group-hover:text-primary transition-colors">{det.name}</p>
-                          <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{det.id}</p>
+                          <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">{det.filename}</p>
+                          <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">SC-{det.id}</p>
                         </div>
                       </div>
                     </td>
                     <td className="py-6">
                       <div className="flex items-center gap-2">
-                        {det.verdict.toUpperCase() === "FAKE" ? (
+                        {det.is_fake ? (
                           <AlertCircle size={18} className="text-error" />
                         ) : (
                           <CheckCircle2 size={18} className="text-success" />
                         )}
-                        <span className={det.verdict.toUpperCase() === "FAKE" ? "text-error font-black text-xs uppercase" : "text-success font-black text-xs uppercase"}>
-                          {det.verdict}
+                        <span className={det.is_fake ? "text-error font-bold text-xs uppercase" : "text-success font-bold text-xs uppercase"}>
+                          {det.label}
                         </span>
                       </div>
                     </td>
                     <td className="py-6 text-center">
-                      <span className="text-sm font-black text-white">{det.confidence.toFixed(1)}%</span>
+                      <span className="text-base font-black text-white">{det.confidence}%</span>
                     </td>
                     <td className="py-6">
-                      <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">{det.date}</span>
+                      <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest">
+                        {new Date(det.created_at).toLocaleString()}
+                      </span>
                     </td>
                     <td className="py-6 text-right pr-8">
-                      <div className="flex items-center justify-end gap-3">
-                        <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 text-zinc-500 hover:text-primary transition-colors">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-xl bg-white/5 text-zinc-500 hover:text-white">
                           <Download size={18} />
-                        </button>
-                        <button className="h-10 w-10 flex items-center justify-center rounded-xl bg-white/5 text-zinc-500 hover:text-white transition-colors">
-                          <MoreVertical size={18} />
-                        </button>
+                        </Button>
+                        <Button variant="ghost" size="sm" className="h-10 w-10 rounded-xl bg-white/5 text-zinc-500 hover:text-red-500">
+                          <Trash2 size={18} />
+                        </Button>
                       </div>
                     </td>
                   </motion.tr>
                 ))}
               </tbody>
             </table>
+            
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="p-8 border-t border-white/5 flex items-center justify-center gap-4">
+                <Button 
+                  variant="outline" 
+                  disabled={page === 1}
+                  onClick={() => setPage(p => p - 1)}
+                  className="rounded-xl"
+                >
+                  Previous
+                </Button>
+                <span className="text-sm font-bold text-zinc-500 uppercase tracking-widest">
+                  Page {page} of {totalPages}
+                </span>
+                <Button 
+                  variant="outline" 
+                  disabled={page === totalPages}
+                  onClick={() => setPage(p => p + 1)}
+                  className="rounded-xl"
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

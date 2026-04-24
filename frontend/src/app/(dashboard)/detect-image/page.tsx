@@ -3,12 +3,9 @@
 import React, { useState } from "react";
 import { 
   ShieldCheck, 
-  Search, 
   Image as ImageIcon, 
   AlertTriangle,
   Loader2,
-  BarChart3,
-  RefreshCw,
   Zap,
   Activity,
   ArrowRight
@@ -21,7 +18,6 @@ import { DetectionResult } from "@/components/detection/DetectionResult";
 import { detectImage } from "@/lib/api";
 import { DetectionResult as DetectionResultType } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export default function DetectImagePage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,15 +44,16 @@ export default function DetectImagePage() {
       setImageResult(result);
       toast.success("Image analysis complete.", { id: toastId });
       saveToHistory(result, "image");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      toast.error(error.response?.data?.detail || "Scan failed. Please check network connectivity.", { id: toastId });
+      const errorMessage = (error as any)?.response?.data?.detail || "Scan failed. Please check network connectivity.";
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const saveToHistory = (result: any, type: string) => {
+  const saveToHistory = (result: DetectionResultType, type: string) => {
     const history = JSON.parse(localStorage.getItem("detection_history") || "[]");
     const newEntry = {
       id: `SC-${Math.floor(Math.random() * 10000)}`,

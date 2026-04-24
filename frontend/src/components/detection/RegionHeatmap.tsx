@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Info, Layers, Maximize2, Zap } from "lucide-react";
+import { Info, Layers, Zap } from "lucide-react";
 import { Badge } from "../ui/Badge";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,7 +28,7 @@ export function RegionHeatmap({
 
   if (!gradcamImage && !heatmapImage) return null;
 
-  const views = [
+  const views: Array<{ id: "overlay" | "heatmap" | "original"; label: string; image?: string }> = [
     { id: "overlay", label: "Analysis Overlay", image: gradcamImage },
     { id: "heatmap", label: "Heatmap View", image: heatmapImage },
     { id: "original", label: "Original Face", image: originalImage },
@@ -47,7 +47,7 @@ export function RegionHeatmap({
           {views.map((view) => (
             <button
               key={view.id}
-              onClick={() => setActiveTab(view.id as any)}
+              onClick={() => setActiveTab(view.id)}
               className={cn(
                 "rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-widest transition-all",
                 activeTab === view.id

@@ -44,7 +44,7 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-12 max-w-2xl text-lg font-medium text-zinc-500 sm:text-xl leading-relaxed font-mono">
-          // The industry-standard forensic layer for digital media verification. <br className="hidden sm:block" />
+          {"// The industry-standard forensic layer for digital media verification."} <br className="hidden sm:block" />
           Powered by <span className="text-white border-b border-white/20">EfficientNet-B4</span> with <span className="text-primary font-bold">96.8% precision</span>.
         </p>
 

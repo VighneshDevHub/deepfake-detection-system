@@ -3,8 +3,11 @@
 import React from "react";
 import { Bell, Search, User, Zap } from "lucide-react";
 import { Button } from "../ui/Button";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export function Topbar() {
+  const { avatarUrl, displayName, email, initials, roleLabel } = useCurrentUser();
+
   return (
     <header className="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-white/5 bg-background-dark/50 px-8 backdrop-blur-2xl">
       <div className="flex w-96 items-center gap-3 rounded-xl border border-white/5 bg-white/5 px-4 py-2 text-zinc-400 focus-within:border-primary focus-within:text-white">
@@ -31,11 +34,24 @@ export function Topbar() {
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-sm font-bold text-white">Vighnesh</p>
-              <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Admin</p>
+              <p className="text-sm font-bold text-white">{displayName}</p>
+              <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
+                {email || roleLabel}
+              </p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 border border-white/5 text-zinc-400">
-              <User size={20} />
+              {avatarUrl ? (
+                // Render the user avatar from the auth provider when available.
+                <img
+                  src={avatarUrl}
+                  alt={displayName}
+                  className="h-full w-full rounded-xl object-cover"
+                />
+              ) : initials ? (
+                <span className="text-sm font-black text-primary">{initials}</span>
+              ) : (
+                <User size={20} />
+              )}
             </div>
           </div>
         </div>

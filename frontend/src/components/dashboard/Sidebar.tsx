@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   Image as ImageIcon,
@@ -17,6 +17,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "../shared/Logo";
+import { supabase } from "@/lib/supabase";
+import { toast } from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const menuItems = [
   { name: "Overview", icon: LayoutDashboard, href: "/dashboard" },
@@ -30,6 +33,27 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { avatarUrl, displayName, email, initials, roleLabel } = useCurrentUser();
+  const [isSigningOut, setIsSigningOut] = React.useState(false);
+
+  const handleSignOut = async () => {
+    if (isSigningOut) return;
+    setIsSigningOut(true);
+
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.success("Session terminated.");
+      // Use window.location.href for a full page reload to clear all states
+      window.location.href = "/sign-in";
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Sign out failed.");
+    } finally {
+      setIsSigningOut(false);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-white/5 bg-background-dark/50 backdrop-blur-2xl">
@@ -61,6 +85,28 @@ export function Sidebar() {
         </div>
 
         <div className="mt-auto pt-6">
+          <div className="mb-4 rounded-2xl border border-white/5 bg-white/5 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-zinc-800 text-zinc-400">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={displayName}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="text-sm font-black text-primary">{initials}</span>
+                )}
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-white">{displayName}</p>
+                <p className="truncate text-[10px] font-medium uppercase tracking-widest text-zinc-500">
+                  {email || roleLabel}
+                </p>
+              </div>
+            </div>
+          </div>
+
           <div className="mb-6 rounded-2xl bg-white/5 p-4 border border-white/5">
             <div className="flex items-center gap-2 text-primary mb-2">
               <Zap size={16} fill="currentColor" />
@@ -72,9 +118,13 @@ export function Sidebar() {
             </button>
           </div>
 
-          <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-500">
+          <button 
+            onClick={handleSignOut}
+            disabled={isSigningOut}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-zinc-400 transition-colors hover:bg-red-500/10 hover:text-red-500"
+          >
             <LogOut size={20} />
-            Sign Out
+            {isSigningOut ? "Signing Out..." : "Sign Out"}
           </button>
         </div>
       </div>

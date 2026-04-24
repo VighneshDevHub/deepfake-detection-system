@@ -7,46 +7,76 @@ import {
   CheckCircle2, 
   Activity,
   TrendingUp,
-  TrendingDown
+  TrendingDown,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
-
-const stats = [
-  { 
-    label: "Total Scans", 
-    value: "1,284", 
-    change: "+12.5%", 
-    trend: "up", 
-    icon: Activity, 
-    color: "primary" 
-  },
-  { 
-    label: "Fake Detected", 
-    value: "412", 
-    change: "+8.2%", 
-    trend: "up", 
-    icon: AlertCircle, 
-    color: "accent" 
-  },
-  { 
-    label: "Real Verified", 
-    value: "872", 
-    change: "-2.4%", 
-    trend: "down", 
-    icon: CheckCircle2, 
-    color: "success" 
-  },
-  { 
-    label: "Avg. Confidence", 
-    value: "94.2%", 
-    change: "+0.5%", 
-    trend: "up", 
-    icon: ShieldCheck, 
-    color: "primary" 
-  },
-];
+import { getStats, StatsData } from "@/lib/api";
+import { cn } from "@/lib/utils";
 
 export function StatsCards() {
+  const [statsData, setStatsData] = React.useState<StatsData | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getStats();
+        setStatsData(data);
+      } catch (error) {
+        console.error("Failed to fetch stats:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-40 animate-pulse rounded-3xl bg-white/5" />
+        ))}
+      </div>
+    );
+  }
+
+  const stats = [
+    { 
+      label: "Total Scans", 
+      value: statsData?.total_detections.toLocaleString() || "0", 
+      change: "+0%", 
+      trend: "up", 
+      icon: Activity, 
+      color: "primary" 
+    },
+    { 
+      label: "Fake Detected", 
+      value: statsData?.fake_detected.toLocaleString() || "0", 
+      change: statsData ? `${statsData.fake_percentage}%` : "0%", 
+      trend: "up", 
+      icon: AlertCircle, 
+      color: "accent" 
+    },
+    { 
+      label: "Real Verified", 
+      value: statsData?.real_detected.toLocaleString() || "0", 
+      change: "verified", 
+      trend: "up", 
+      icon: CheckCircle2, 
+      color: "success" 
+    },
+    { 
+      label: "Avg. Confidence", 
+      value: "94.2%", 
+      change: "+0.5%", 
+      trend: "up", 
+      icon: ShieldCheck, 
+      color: "primary" 
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((stat, i) => (
@@ -82,5 +112,3 @@ export function StatsCards() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

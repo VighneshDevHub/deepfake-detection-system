@@ -17,8 +17,9 @@ export function useVideoDetection() {
       setResult(data);
       toast.success("Video forensics complete.", { id: toastId });
       return data;
-    } catch (error: any) {
-      toast.error(error.response?.data?.detail || "Scan failed.", { id: toastId });
+    } catch (error: unknown) {
+      const errorMessage = (error as any)?.response?.data?.detail || "Scan failed.";
+      toast.error(errorMessage, { id: toastId });
       throw error;
     } finally {
       setIsLoading(false);

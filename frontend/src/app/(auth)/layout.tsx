@@ -2,6 +2,7 @@ import React from "react";
 import { AnimatedBackground } from "@/components/shared/AnimatedBackground";
 import { Logo } from "@/components/shared/Logo";
 import Link from "next/link";
+import { Toaster } from "react-hot-toast";
 
 export default function AuthLayout({
   children,
@@ -26,6 +27,18 @@ export default function AuthLayout({
         <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
         <Link href="/" className="hover:text-primary transition-colors">Return Home</Link>
       </div>
+
+      <Toaster 
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#0F172A',
+            color: '#fff',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(12px)',
+          },
+        }}
+      />
     </div>
   );
 }

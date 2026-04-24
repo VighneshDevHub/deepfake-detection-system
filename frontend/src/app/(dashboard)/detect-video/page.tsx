@@ -6,8 +6,6 @@ import {
   Film, 
   AlertTriangle,
   Loader2,
-  BarChart3,
-  RefreshCw,
   Zap,
   Activity,
   ArrowRight
@@ -20,7 +18,6 @@ import { VideoResult } from "@/components/detection/VideoResult";
 import { detectVideo } from "@/lib/api";
 import { VideoDetectionResult } from "@/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
 
 export default function DetectVideoPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,15 +44,16 @@ export default function DetectVideoPage() {
       setVideoResult(result);
       toast.success("Video analysis complete.", { id: toastId });
       saveToHistory(result, "video");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      toast.error(error.response?.data?.detail || "Scan failed. Please check network connectivity.", { id: toastId });
+      const errorMessage = (error as any)?.response?.data?.detail || "Scan failed. Please check network connectivity.";
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const saveToHistory = (result: any, type: string) => {
+  const saveToHistory = (result: VideoDetectionResult, type: string) => {
     const history = JSON.parse(localStorage.getItem("detection_history") || "[]");
     const newEntry = {
       id: `SC-${Math.floor(Math.random() * 10000)}`,

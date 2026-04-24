@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, Mail, Github, Twitter, Linkedin } from "lucide-react";
+import { ShieldCheck, Mail } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -22,13 +22,13 @@ export function Footer() {
             </p>
             <div className="mt-6 flex space-x-4">
               <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <Github className="h-6 w-6" />
+                <span className="h-6 w-6 font-bold">GH</span>
               </Link>
               <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <Twitter className="h-6 w-6" />
+                <span className="h-6 w-6 font-bold">X</span>
               </Link>
               <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <Linkedin className="h-6 w-6" />
+                <span className="h-6 w-6 font-bold">IN</span>
               </Link>
               <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
                 <Mail className="h-6 w-6" />

@@ -2,17 +2,97 @@
 
 import React from "react";
 import Link from "next/link";
-import { Mail, Lock, ArrowRight, Github, Chrome } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { motion } from "framer-motion";
 
+import { supabase } from "@/lib/supabase";
+import { toast } from "react-hot-toast";
+
 export default function SignInPage() {
-  const handleSignIn = (e: React.FormEvent) => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isResending, setIsResending] = React.useState(false);
+
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login
-    localStorage.setItem("user_session", "true");
-    window.location.href = "/dashboard";
+    if (isLoading) return;
+    setIsLoading(true);
+
+    console.log("Attempting login with:", email);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      console.log("Login response:", { data, error });
+
+      if (error) {
+        console.error("Login error:", error);
+        if (error.message.includes("Email not confirmed")) {
+          toast.error("Please confirm your email address before logging in.");
+        } else {
+          toast.error(error.message || "Access denied.");
+        }
+        return;
+      }
+
+      toast.success("Identity verified. Access granted.");
+      window.location.href = "/dashboard";
+    } catch (error: unknown) {
+      const err = error as Error;
+      console.error("Unexpected login error:", err);
+      toast.error(err.message || "Access denied.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOAuthSignIn = async (provider: 'github' | 'google') => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "OAuth initialization failed.");
+    }
+  };
+
+  const handleResendConfirmation = async () => {
+    if (!email) {
+      toast.error("Enter your email first to resend the confirmation link.");
+      return;
+    }
+
+    if (isResending) return;
+    setIsResending(true);
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: {
+          emailRedirectTo: `${window.location.origin}/sign-in`,
+        },
+      });
+
+      if (error) throw error;
+      toast.success("Confirmation email sent. Please check your inbox and spam folder.");
+    } catch (error: unknown) {
+      const err = error as Error;
+      toast.error(err.message || "Unable to resend confirmation email.");
+    } finally {
+      setIsResending(false);
+    }
   };
 
   return (
@@ -34,24 +114,41 @@ export default function SignInPage() {
             placeholder="m@example.com" 
             icon={<Mail size={18} />}
             required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isLoading}
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between px-1">
             <label className="text-xs font-bold uppercase tracking-widest text-zinc-400">Access Key</label>
-            <Link href="#" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest">Recovery Mode</Link>
+            <button
+              type="button"
+              onClick={handleResendConfirmation}
+              className="text-[10px] font-bold text-primary hover:underline uppercase tracking-widest disabled:opacity-60"
+              disabled={isLoading || isResending}
+            >
+              {isResending ? "Sending..." : "Resend Verify"}
+            </button>
           </div>
           <Input 
             type="password" 
             placeholder="••••••••" 
             icon={<Lock size={18} />}
             required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={isLoading}
           />
         </div>
 
-        <Button className="w-full h-14 rounded-xl bg-primary text-background-dark font-black uppercase tracking-widest glow-primary transition-all hover:scale-[1.02] active:scale-95">
-          INITIALIZE SESSION <ArrowRight className="ml-2" size={20} />
+        <Button 
+          type="submit"
+          className="w-full h-14 rounded-xl bg-primary text-background-dark font-black uppercase tracking-widest glow-primary transition-all hover:scale-[1.02] active:scale-95"
+          disabled={isLoading}
+        >
+          {isLoading ? "AUTHORIZING..." : "INITIALIZE SESSION"} <ArrowRight className="ml-2" size={20} />
         </Button>
       </form>
 
@@ -65,11 +162,21 @@ export default function SignInPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" className="h-12 rounded-xl border-white/5 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all">
-          <Github size={18} className="mr-2" /> GITHUB
+        <Button 
+          variant="outline" 
+          className="h-12 rounded-xl border-white/5 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+          onClick={() => handleOAuthSignIn('github')}
+          disabled={isLoading}
+        >
+          <span className="mr-2 font-bold">GH</span> GITHUB
         </Button>
-        <Button variant="outline" className="h-12 rounded-xl border-white/5 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all">
-          <Chrome size={18} className="mr-2" /> GOOGLE
+        <Button 
+          variant="outline" 
+          className="h-12 rounded-xl border-white/5 bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 transition-all"
+          onClick={() => handleOAuthSignIn('google')}
+          disabled={isLoading}
+        >
+          <span className="mr-2">G</span> GOOGLE
         </Button>
       </div>
 

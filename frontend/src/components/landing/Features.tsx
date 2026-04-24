@@ -99,7 +99,7 @@ export function Features() {
             transition={{ delay: 0.2 }}
             className="mx-auto mt-10 max-w-2xl text-lg font-medium text-zinc-500 font-mono"
           >
-            // Sequential neural analysis layers designed for industrial-grade synthetic media detection.
+            {"// Sequential neural analysis layers designed for industrial-grade synthetic media detection."}
           </motion.p>
         </div>
 

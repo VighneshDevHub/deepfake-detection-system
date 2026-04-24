@@ -11,15 +11,21 @@ import {
   RefreshCw,
   Server,
   Activity,
-  User
+  User as UserIcon,
+  Mail,
+  Shield,
+  Calendar
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ThresholdSlider } from "@/components/ui/ThresholdSlider";
 import { toast } from "react-hot-toast";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { cn } from "@/lib/utils";
 
 export default function SettingsPage() {
+  const { user, displayName, email, roleLabel, avatarUrl } = useCurrentUser();
   const [threshold, setThreshold] = useState(0.5);
   const [apiUrl, setApiUrl] = useState("http://localhost:8000/api/v1");
 
@@ -28,13 +34,13 @@ export default function SettingsPage() {
   };
 
   const sections = [
-    { id: "account", label: "Profile", icon: User },
+    { id: "account", label: "Profile", icon: UserIcon },
     { id: "api", label: "Engine", icon: Server },
     { id: "notifications", label: "Alerts", icon: Bell },
     { id: "security", label: "Security", icon: Lock },
   ];
 
-  const [activeSection, setActiveSection] = useState("api");
+  const [activeSection, setActiveSection] = useState("account");
 
   return (
     <div className="flex flex-col gap-10">
@@ -84,6 +90,71 @@ export default function SettingsPage() {
             animate={{ opacity: 1, y: 0 }}
             className="rounded-[2.5rem] border border-white/5 bg-white/2 backdrop-blur-3xl p-10"
           >
+            {activeSection === "account" && (
+              <div className="space-y-10">
+                <div className="flex flex-col gap-8 md:flex-row md:items-center">
+                  <div className="relative">
+                    <div className="h-32 w-32 overflow-hidden rounded-[2.5rem] border-2 border-primary/20 bg-zinc-800 p-1">
+                      {avatarUrl ? (
+                        <img src={avatarUrl} alt={displayName} className="h-full w-full rounded-[2.2rem] object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center rounded-[2.2rem] bg-zinc-900 text-4xl font-black text-primary">
+                          {displayName[0]}
+                        </div>
+                      )}
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary text-background-dark glow-primary">
+                      <UserIcon size={20} />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-3xl font-black text-white uppercase tracking-tighter">{displayName}</h3>
+                    <p className="text-sm font-bold text-primary uppercase tracking-widest">{roleLabel}</p>
+                    <div className="mt-4 flex flex-wrap gap-4">
+                      <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-widest">
+                        <Mail size={14} /> {email}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs font-medium text-zinc-500 uppercase tracking-widest">
+                        <Shield size={14} /> Verified Account
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="h-[1px] w-full bg-white/5" />
+
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-1">Full Name</label>
+                    <Input value={displayName} readOnly icon={<UserIcon size={18} />} />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-xs font-bold uppercase tracking-widest text-zinc-400 ml-1">Email Address</label>
+                    <Input value={email} readOnly icon={<Mail size={18} />} />
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-white/5 bg-white/5 p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                      <Calendar size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-black text-white uppercase tracking-widest">Account Created</h4>
+                      <p className="mt-1 text-xs font-medium text-zinc-500 uppercase tracking-widest">
+                        {user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                        }) : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {activeSection === "api" && (
               <div className="space-y-10">
                 <div>
@@ -137,7 +208,7 @@ export default function SettingsPage() {
               </div>
             )}
 
-            {activeSection !== "api" && (
+            {activeSection !== "api" && activeSection !== "account" && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
                 <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-white/5 text-zinc-800">
                   <Zap size={40} />
@@ -152,5 +223,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";

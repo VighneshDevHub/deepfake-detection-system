@@ -91,7 +91,7 @@ export function HowItWorks() {
                 
                 <div className="px-4">
                   <div className="mb-3 text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-600 group-hover:text-primary transition-colors">
-                    {step.id} // {step.metrics}
+                    {step.id} {"//"} {step.metrics}
                   </div>
                   <h3 className="mb-4 text-2xl font-black text-white group-hover:text-primary transition-colors uppercase tracking-tight">{step.title}</h3>
                   <p className="text-sm font-medium leading-relaxed text-zinc-500 group-hover:text-zinc-400 transition-colors">
