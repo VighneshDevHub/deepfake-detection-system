@@ -53,11 +53,28 @@ def get_current_user(
     payload = decode_token(credentials.credentials)
     if not payload:
         raise exc
-    email = payload.get("sub")
+    
+    # Supabase uses 'email' field, custom JWT might use 'sub'
+    email = payload.get("email") or payload.get("sub")
     if not email:
         raise exc
+        
     user = get_user_by_email(db, email)
-    if not user or not user.is_active:
+    
+    # If user doesn't exist in our local table but exists in Supabase, 
+    # we should probably create them on the fly
+    if not user:
+        # Simple JIT user creation
+        user = User(
+            email=email,
+            full_name=payload.get("user_metadata", {}).get("full_name"),
+            hashed_password="SUPABASE_AUTH", # Placeholder
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    if not user.is_active:
         raise exc
     return user
 
@@ -68,10 +85,7 @@ def get_optional_user(
 ) -> User | None:
     if not credentials:
         return None
-    payload = decode_token(credentials.credentials)
-    if not payload:
+    try:
+        return get_current_user(credentials, db)
+    except HTTPException:
         return None
-    email = payload.get("sub")
-    if not email:
-        return None
-    return get_user_by_email(db, email)

@@ -156,18 +156,20 @@ class VideoService:
 
         # Overall verdict
         is_fake      = fake_ratio >= 0.5
-        avg_fake_prob = np.mean([f.fake_prob for f in frame_results])
-        avg_real_prob = np.mean([f.real_prob for f in frame_results])
-        confidence    = round(float(avg_fake_prob if is_fake else avg_real_prob), 2)
+        avg_fake_prob = float(np.mean([f.fake_prob for f in frame_results]))
+        avg_real_prob = float(np.mean([f.real_prob for f in frame_results]))
+        confidence    = round(avg_fake_prob if is_fake else avg_real_prob, 2)
 
         return {
             "label"               : "FAKE" if is_fake else "REAL",
             "confidence"          : confidence,
             "is_fake"             : is_fake,
+            "real_prob"           : avg_real_prob,
+            "fake_prob"           : avg_fake_prob,
             "fake_frame_count"    : len(fake_frames),
             "real_frame_count"    : len(real_frames),
             "total_frames_analyzed": len(frame_results),
-            "fake_frame_ratio"    : round(fake_ratio, 4),
+            "fake_frame_ratio"    : round(float(fake_ratio), 4),
             "threshold_used"      : threshold,
         }
 

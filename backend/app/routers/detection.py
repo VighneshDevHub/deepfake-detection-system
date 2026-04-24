@@ -2,6 +2,7 @@
 
 import time
 from fastapi import APIRouter, UploadFile, File, Depends, Query
+from sqlalchemy.orm import Session
 
 from app.schemas.detection import DetectionResponse
 from app.services.inference     import InferenceService
@@ -16,6 +17,10 @@ from app.dependencies import (
 )
 from app.config import Settings
 from app.core.logging import get_logger
+from app.database import get_db
+from app.services.auth_service import get_optional_user
+from app.models.user import User
+from app.models.detection_history import DetectionHistory
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -39,6 +44,8 @@ async def detect_image(
     gradcam : GradCAMService      = Depends(get_gradcam_service),
     face_svc: FaceDetectorService = Depends(get_face_detector),
     settings: Settings            = Depends(get_settings_dep),
+    db      : Session             = Depends(get_db),
+    user    : User                = Depends(get_optional_user),
 ):
     t_start    = time.time()
     file_bytes = await file.read()
@@ -55,12 +62,6 @@ async def detect_image(
     face_result     = face_svc.detect(file_bytes)
     inference_bytes = face_svc.encode_to_bytes(face_result.face_image)
 
-    logger.debug(
-        f"Face detection | found={face_result.face_found} | "
-        f"conf={face_result.confidence:.2f} | "
-        f"warning={face_result.warning}"
-    )
-
     # 3 — ONNX inference with custom threshold
     image_array = preprocess_image(inference_bytes)
     result      = svc.predict(image_array, threshold=threshold)
@@ -68,11 +69,21 @@ async def detect_image(
     # 4 — Grad-CAM
     explanation = gradcam.explain(inference_bytes)
 
-    logger.debug(
-        f"GradCAM | "
-        f"gradcam_image={'SET' if explanation.get('gradcam_image') else 'NONE'} | "
-        f"top_regions={explanation.get('top_regions')}"
-    )
+    # 5 — Save to History (if user is logged in)
+    if user:
+        history_entry = DetectionHistory(
+            user_id       = user.id,
+            filename      = file.filename,
+            media_type    = "image",
+            label         = result["label"],
+            confidence    = result["confidence"],
+            is_fake       = result["is_fake"],
+            real_prob     = result["real_prob"],
+            fake_prob     = result["fake_prob"],
+            face_detected = face_result.face_found,
+        )
+        db.add(history_entry)
+        db.commit()
 
     elapsed = round((time.time() - t_start) * 1000, 1)
     logger.info(

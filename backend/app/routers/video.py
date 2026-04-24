@@ -2,6 +2,7 @@
 
 import time
 from fastapi import APIRouter, UploadFile, File, Depends, Query, HTTPException
+from sqlalchemy.orm import Session
 
 from app.schemas.video import VideoDetectionResponse
 from app.services.video_service import VideoService
@@ -11,6 +12,10 @@ from app.dependencies import (
     get_settings_dep,
 )
 from app.core.logging import get_logger
+from app.database import get_db
+from app.services.auth_service import get_optional_user
+from app.models.user import User
+from app.models.detection_history import DetectionHistory
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -33,6 +38,8 @@ async def detect_video(
     svc      = Depends(get_inference_service),
     face_svc = Depends(get_face_detector),
     settings = Depends(get_settings_dep),
+    db      : Session = Depends(get_db),
+    user    : User    = Depends(get_optional_user),
 ):
     """
     Upload a video and get a deepfake verdict.
@@ -56,6 +63,23 @@ async def detect_video(
             filename   = file.filename,
             threshold  = threshold,
         )
+        
+        # Save to History (if user is logged in)
+        if user:
+            history_entry = DetectionHistory(
+                user_id       = user.id,
+                filename      = file.filename,
+                media_type    = "video",
+                label         = result["label"],
+                confidence    = result["confidence"],
+                is_fake       = result["is_fake"],
+                real_prob     = result["real_prob"],
+                fake_prob     = result["fake_prob"],
+                face_detected = any(f.get("face_found", False) for f in result.get("frames", [])),
+            )
+            db.add(history_entry)
+            db.commit()
+            
     except ValueError as e:
         raise HTTPException(status_code=422, detail=str(e))
 

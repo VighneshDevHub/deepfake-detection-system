@@ -32,6 +32,7 @@ class Settings(BaseSettings):
 
     # Auth
     secret_key: str = "57fe9143d17e33d928b7632e...435e735d54df2b1ea2ff310" # Default from error if needed, but usually empty
+    supabase_jwt_secret: str = "" # Set this to use Supabase Auth
     algorithm: str = "HS256"
     access_token_expire_days: int = 7
 

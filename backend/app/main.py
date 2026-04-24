@@ -24,6 +24,9 @@ from app.routers import auth as auth_router
 # Import models so Base knows about them
 from app.models import user, detection_history  # noqa
 
+from app.routers import history as history_router
+
+
 
 logger   = get_logger(__name__)
 settings = get_settings()
@@ -107,6 +110,7 @@ app.include_router(health.router,    prefix="/api/v1")
 app.include_router(detection.router, prefix="/api/v1")
 app.include_router(video.router, prefix="/api/v1")
 app.include_router(auth_router.router, prefix="/api/v1")
+app.include_router(history_router.router, prefix="/api/v1")
 
 
 

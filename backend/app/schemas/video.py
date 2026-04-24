@@ -43,6 +43,8 @@ class VideoDetectionResponse(BaseModel):
     real_frame_count     : int
     total_frames_analyzed: int
     fake_frame_ratio     : float
+    real_prob            : float
+    fake_prob            : float
     threshold_used       : float
     model_version        : str           = "efficientnet-b4-v1"
     frame_results        : list[FrameResult]
