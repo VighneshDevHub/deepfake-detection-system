@@ -4,22 +4,22 @@ import time
 from fastapi import APIRouter, UploadFile, File, Depends, Query
 from sqlalchemy.orm import Session
 
-from app.schemas.detection import DetectionResponse
-from app.services.inference     import InferenceService
-from app.services.gradcam       import GradCAMService
-from app.services.face_detector import FaceDetectorService
-from app.services.image_utils   import validate_image, preprocess_image
-from app.dependencies import (
+from ..schemas.detection import DetectionResponse
+from ..services.inference     import InferenceService
+from ..services.gradcam       import GradCAMService
+from ..services.face_detector import FaceDetectorService
+from ..services.image_utils   import validate_image, preprocess_image
+from ..dependencies import (
     get_inference_service,
     get_gradcam_service,
     get_face_detector,
     get_settings_dep,
 )
-from app.config import Settings
-from app.core.logging import get_logger
-from app.database import get_db
-from app.services.auth_service import get_optional_user
-from app.models import User, DetectionHistory
+from ..config import Settings
+from ..core.logging import get_logger
+from ..database import get_db
+from ..services.auth_service import get_optional_user
+from ..models import User, DetectionHistory
 
 logger = get_logger(__name__)
 router = APIRouter()

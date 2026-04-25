@@ -2,8 +2,8 @@
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from app.config import get_settings
-from app.core.logging import get_logger
+from .config import get_settings
+from .core.logging import get_logger
 
 logger   = get_logger(__name__)
 settings = get_settings()

@@ -4,17 +4,17 @@ import time
 from fastapi import APIRouter, UploadFile, File, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 
-from app.schemas.video import VideoDetectionResponse
-from app.services.video_service import VideoService
-from app.dependencies import (
+from ..schemas.video import VideoDetectionResponse
+from ..services.video_service import VideoService
+from ..dependencies import (
     get_inference_service,
     get_face_detector,
     get_settings_dep,
 )
-from app.core.logging import get_logger
-from app.database import get_db
-from app.services.auth_service import get_optional_user
-from app.models import User, DetectionHistory
+from ..core.logging import get_logger
+from ..database import get_db
+from ..services.auth_service import get_optional_user
+from ..models import User, DetectionHistory
 
 logger = get_logger(__name__)
 router = APIRouter()

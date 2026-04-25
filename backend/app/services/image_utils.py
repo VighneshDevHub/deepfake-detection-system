@@ -5,12 +5,12 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from app.core.exceptions import (
+from ..core.exceptions import (
     InvalidImageError,
     FileTooLargeError,
     UnsupportedFileTypeError,
 )
-from app.core.logging import get_logger
+from ..core.logging import get_logger
 
 logger = get_logger(__name__)
 

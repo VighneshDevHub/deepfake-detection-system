@@ -4,8 +4,8 @@ import numpy as np
 import onnxruntime as ort
 from pathlib import Path
 
-from app.core.exceptions import ModelNotLoadedError
-from app.core.logging import get_logger
+from ..core.exceptions import ModelNotLoadedError
+from ..core.logging import get_logger
 
 logger  = get_logger(__name__)
 CLASSES = ["real", "fake"]

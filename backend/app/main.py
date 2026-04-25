@@ -5,26 +5,26 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import get_settings
-from app.core.logging import setup_logging, get_logger
-from app.core.exceptions import (
+from .config import get_settings
+from .core.logging import setup_logging, get_logger
+from .core.exceptions import (
     ModelNotLoadedError, InvalidImageError,
     FileTooLargeError, UnsupportedFileTypeError,
     model_not_loaded_handler, invalid_image_handler,
     file_too_large_handler, unsupported_type_handler,
 )
-from app.services.inference    import inference_service
-# from app.services.gradcam      import gradcam_service
-from app.services.face_detector import face_detector
-from app.routers import detection, health
-from app.routers import video
-from app.database import engine, Base
-from app.routers import auth as auth_router
+from .services.inference    import inference_service
+# from .services.gradcam      import gradcam_service
+from .services.face_detector import face_detector
+from .routers import detection, health
+from .routers import video
+from .database import engine, Base
+from .routers import auth as auth_router
 
 # Import models so Base knows about them
-from app.models import User, DetectionHistory  # noqa
+from .models import User, DetectionHistory  # noqa
 
-from app.routers import history as history_router
+from .routers import history as history_router
 
 
 
@@ -51,7 +51,7 @@ async def lifespan(app: FastAPI):
     # 2. Grad-CAM PyTorch model
     # In lifespan(), replace the gradcam loading block with:
     try:
-        from app.services.gradcam import gradcam_service
+        from .services.gradcam import gradcam_service
         pth_path = Path(settings.gradcam_model_path)
         if pth_path.exists():
             gradcam_service.load(str(pth_path))

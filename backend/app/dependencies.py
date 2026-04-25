@@ -1,16 +1,16 @@
 # backend/app/dependencies.py
 
 from fastapi import Depends
-from app.services.inference import inference_service, InferenceService
-# from app.services.gradcam   import gradcam_service,   GradCAMService
-from app.services.face_detector import face_detector,     FaceDetectorService
+from .services.inference import inference_service, InferenceService
+# from .services.gradcam   import gradcam_service,   GradCAMService
+from .services.face_detector import face_detector,     FaceDetectorService
 
-from app.config import get_settings, Settings
+from .config import get_settings, Settings
 
 
 
 try:
-    from app.services.gradcam import gradcam_service, GradCAMService
+    from .services.gradcam import gradcam_service, GradCAMService
 except ImportError:
     gradcam_service = None
     GradCAMService  = None

@@ -5,7 +5,7 @@ import numpy as np
 from dataclasses import dataclass
 from typing import Optional
 from pathlib import Path
-from app.core.logging import get_logger
+from ..core.logging import get_logger
 
 logger = get_logger(__name__)
 

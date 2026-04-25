@@ -1,13 +1,13 @@
 # backend/app/routers/health.py
 
 from fastapi import APIRouter, Depends
-from app.schemas.detection import HealthResponse
-from app.dependencies import (
+from ..schemas.detection import HealthResponse
+from ..dependencies import (
     get_inference_service, get_gradcam_service, get_settings_dep
 )
-from app.services.inference import InferenceService
-from app.services.gradcam import GradCAMService
-from app.config import Settings
+from ..services.inference import InferenceService
+from ..services.gradcam import GradCAMService
+from ..config import Settings
 
 router = APIRouter()
 

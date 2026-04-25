@@ -5,11 +5,11 @@ import cv2
 import tempfile
 import numpy as np
 from pathlib import Path
-from app.core.logging import get_logger
-from app.services.inference     import InferenceService
-from app.services.face_detector import FaceDetectorService
-from app.services.image_utils   import preprocess_image
-from app.schemas.video import FrameResult
+from ..core.logging import get_logger
+from .inference     import InferenceService
+from .face_detector import FaceDetectorService
+from .image_utils   import preprocess_image
+from ..schemas.video import FrameResult
 
 logger = get_logger(__name__)
 
