@@ -155,7 +155,7 @@ export function Pricing() {
               </div>
 
               <Button 
-                variant={plan.popular ? "default" : "outline"} 
+                variant={plan.popular ? "primary" : "outline"} 
                 className={`mt-auto h-14 rounded-2xl font-black uppercase tracking-widest transition-all ${
                   plan.popular 
                     ? 'bg-primary text-background-dark glow-primary hover:scale-105' 
