@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/landing/Hero";
 import { TrustedBy } from "@/components/landing/TrustedBy";
 import { Features } from "@/components/landing/Features";
+import { FeaturesShowcase } from "@/components/landing/FeaturesShowcase";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Stats } from "@/components/landing/Stats";
 import { Testimonials } from "@/components/landing/Testimonials";
@@ -25,6 +26,7 @@ export default function Home() {
         <TrustedBy />
         <Stats />
         <Features />
+        <FeaturesShowcase />
         <HowItWorks />
         <Testimonials />
         <Pricing />
