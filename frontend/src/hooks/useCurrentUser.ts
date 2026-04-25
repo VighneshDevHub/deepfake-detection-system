@@ -44,7 +44,7 @@ export function useCurrentUser() {
 
     loadUser();
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event: import('@supabase/supabase-js').AuthChangeEvent, session) => {
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event: import('@supabase/supabase-js').AuthChangeEvent, session: import('@supabase/supabase-js').Session | null) => {
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
