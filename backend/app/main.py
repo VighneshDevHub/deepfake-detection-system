@@ -1,7 +1,25 @@
 # backend/app/main.py
 
-from contextlib import asynccontextmanager
+import sys
+import os
 from pathlib import Path
+
+# DEBUG: Print environment info to help diagnose ModuleNotFoundError on Render
+print(f"DEBUG: sys.path = {sys.path}")
+print(f"DEBUG: current working directory = {os.getcwd()}")
+app_dir = Path(__file__).parent
+print(f"DEBUG: app directory = {app_dir}")
+models_dir = app_dir / "models"
+print(f"DEBUG: models directory exists: {models_dir.exists()}")
+if models_dir.exists():
+    print(f"DEBUG: models directory contents: {os.listdir(models_dir)}")
+    init_file = models_dir / "__init__.py"
+    print(f"DEBUG: models/__init__.py exists: {init_file.exists()}")
+    if init_file.exists():
+        with open(init_file, "r") as f:
+            print(f"DEBUG: models/__init__.py content: {f.read()}")
+
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,14 +34,13 @@ from .core.exceptions import (
 from .services.inference    import inference_service
 # from .services.gradcam      import gradcam_service
 from .services.face_detector import face_detector
+# Import models so Base knows about them
+from .models import User, DetectionHistory  # noqa
+
 from .routers import detection, health
 from .routers import video
 from .database import engine, Base
 from .routers import auth as auth_router
-
-# Import models so Base knows about them
-from .models import User, DetectionHistory  # noqa
-
 from .routers import history as history_router
 
 
