@@ -56,7 +56,8 @@ datasets/
 # -----------------------------
 # Model Files (Important for ML)
 # -----------------------------
-models/
+/models/
+/backend/models/
 checkpoints/
 *.pth
 *.pt

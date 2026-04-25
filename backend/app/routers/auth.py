@@ -7,7 +7,7 @@ from ..schemas.auth import UserRegister, UserLogin, Token, UserOut
 from ..services.auth_service import create_user, authenticate_user, get_current_user
 from ..core.security import create_access_token
 from ..database import get_db
-from ..models import User
+from ..db_models import User
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

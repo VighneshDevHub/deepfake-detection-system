@@ -14,7 +14,7 @@ from ..dependencies import (
 from ..core.logging import get_logger
 from ..database import get_db
 from ..services.auth_service import get_optional_user
-from ..models import User, DetectionHistory
+from ..db_models import User, DetectionHistory
 
 logger = get_logger(__name__)
 router = APIRouter()

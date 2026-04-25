@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from datetime import datetime
 
 from ..database import get_db
-from ..models import User, DetectionHistory
+from ..db_models import User, DetectionHistory
 from ..services.auth_service import get_current_user
 
 router = APIRouter(prefix="/history", tags=["History"])
