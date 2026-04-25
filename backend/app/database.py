@@ -14,15 +14,23 @@ class Base(DeclarativeBase):
 
 
 def get_engine():
-    if not settings.database_url:
-        raise ValueError("DATABASE_URL not set")
+    # Use SQLite as a fallback for local development if DATABASE_URL is not set
+    db_url = settings.database_url or "sqlite:///./deepfake_detection.db"
+    
+    is_sqlite = db_url.startswith("sqlite")
+    
+    connect_args = {}
+    if not is_sqlite:
+        connect_args["sslmode"] = "require"
+    else:
+        # SQLite needs this for multi-threaded FastAPI
+        connect_args["check_same_thread"] = False
+        
     return create_engine(
-        settings.database_url,
-        pool_pre_ping = True,
-        pool_recycle  = 300,
-        pool_size     = 5,
-        max_overflow  = 10,
-        connect_args  = {"sslmode": "require"},
+        db_url,
+        pool_pre_ping = not is_sqlite,
+        pool_recycle  = 300 if not is_sqlite else -1,
+        connect_args  = connect_args,
     )
 
 

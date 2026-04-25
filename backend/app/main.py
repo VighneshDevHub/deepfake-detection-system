@@ -22,7 +22,7 @@ from app.database import engine, Base
 from app.routers import auth as auth_router
 
 # Import models so Base knows about them
-from app.models import user, detection_history  # noqa
+from app.models import User, DetectionHistory  # noqa
 
 from app.routers import history as history_router
 
