@@ -1,82 +1,87 @@
 import Link from "next/link";
-import { ShieldCheck, Mail } from "lucide-react";
+import { ShieldCheck, Mail, ExternalLink, X, Globe } from "lucide-react";
+import { Logo } from "../shared/Logo";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-zinc-200 bg-white/50 dark:border-zinc-800 dark:bg-black/50">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4">
+    <footer className="border-t border-white/5 bg-background-dark py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-4 mb-20">
           <div className="col-span-1 lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-              <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-                DeepFake<span className="text-blue-600">Detect</span>
-              </span>
-            </Link>
-            <p className="mt-4 max-w-sm text-base text-zinc-500 dark:text-zinc-400">
-              State-of-the-art deepfake detection powered by EfficientNet-B4. Protecting the truth in a digital world.
+            <Logo />
+            <p className="mt-6 max-w-sm text-sm font-medium text-zinc-500 leading-relaxed">
+              Industrial-grade forensic layer for digital media verification. 
+              Powered by EfficientNet-B4 with 96.8% validated precision.
             </p>
-            <div className="mt-6 flex space-x-4">
-              <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <span className="h-6 w-6 font-bold">GH</span>
+            <div className="mt-8 flex space-x-6">
+              <Link href="#" className="text-zinc-500 hover:text-primary transition-colors">
+                <ExternalLink size={20} />
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <span className="h-6 w-6 font-bold">X</span>
+              <Link href="#" className="text-zinc-500 hover:text-primary transition-colors">
+                <X size={20} />
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <span className="h-6 w-6 font-bold">IN</span>
+              <Link href="#" className="text-zinc-500 hover:text-primary transition-colors">
+                <Globe size={20} />
               </Link>
-              <Link href="#" className="text-zinc-400 hover:text-blue-600 dark:hover:text-blue-400">
-                <Mail className="h-6 w-6" />
+              <Link href="#" className="text-zinc-500 hover:text-primary transition-colors">
+                <Mail size={20} />
               </Link>
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-2 lg:col-span-2">
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-50">
-                Product
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">
+                Capabilities
               </h3>
-              <ul className="mt-4 space-y-3">
+              <ul className="space-y-4">
                 <li>
-                  <Link href="/dashboard" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    Dashboard
+                  <Link href="/detect-image" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    Image Forensics
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    Features
+                  <Link href="/detect-video" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    Video Consistency
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    API Reference
+                  <Link href="/detect-audio" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    Audio Synthesis
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/detect-text" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    NLP Artifacts
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-900 dark:text-zinc-50">
-                Company
+              <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white mb-8">
+                Platform
               </h3>
-              <ul className="mt-4 space-y-3">
+              <ul className="space-y-4">
                 <li>
-                  <Link href="#" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    About
+                  <Link href="/dashboard" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    Neural Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    Privacy Policy
+                  <Link href="/#pricing" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    SLA Plans
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="text-base text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50">
-                    Terms of Service
+                  <Link href="#" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    API Protocol
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="text-sm font-medium text-zinc-500 transition-colors hover:text-primary">
+                    Forensic Whitepaper
                   </Link>
                 </li>
               </ul>
@@ -84,10 +89,18 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="mt-12 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-          <p className="text-center text-sm text-zinc-500 dark:text-zinc-400">
-            &copy; {currentYear} DeepFakeDetect. All rights reserved.
+        <div className="pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">
+            &copy; {currentYear} DEEPFAKE_CORE // ALL_RIGHTS_RESERVED
           </p>
+          <div className="flex gap-8">
+            <Link href="#" className="text-[10px] font-mono text-zinc-600 hover:text-primary transition-colors uppercase tracking-widest">
+              Privacy_Policy
+            </Link>
+            <Link href="#" className="text-[10px] font-mono text-zinc-600 hover:text-primary transition-colors uppercase tracking-widest">
+              Terms_Of_Service
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

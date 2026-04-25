@@ -13,10 +13,9 @@ export function Navbar() {
   const { user } = useCurrentUser();
 
   const navLinks = [
-    { name: "Image", href: "/detect-image", icon: ImageIcon },
-    { name: "Video", href: "/detect-video", icon: Film },
-    { name: "Audio", href: "/detect-audio", icon: Mic },
-    { name: "Text", href: "/detect-text", icon: FileText },
+    { name: "Features", href: "/#features" },
+    { name: "Pricing", href: "/#pricing" },
+    { name: "How it Works", href: "/#how-it-works" },
   ];
 
   return (
@@ -29,16 +28,15 @@ export function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              className="flex items-center gap-2 text-sm font-medium text-zinc-400 transition-colors hover:text-primary"
+              className="text-sm font-bold uppercase tracking-widest text-zinc-400 transition-colors hover:text-primary"
             >
-              <link.icon size={16} />
               {link.name}
             </Link>
           ))}
           {user && (
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80"
+              className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-primary hover:text-primary/80"
             >
               <LayoutDashboard size={16} />
               Dashboard
@@ -98,10 +96,9 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className="flex items-center gap-3 text-lg font-medium text-zinc-400"
                   onClick={() => setIsOpen(false)}
+                  className="text-lg font-bold uppercase tracking-widest text-zinc-400 hover:text-primary"
                 >
-                  <link.icon size={20} />
                   {link.name}
                 </Link>
               ))}
