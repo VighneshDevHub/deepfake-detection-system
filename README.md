@@ -44,9 +44,23 @@
 
 ## Screenshots
 
-<div align="center">
+<!-- <div align="center">
 <img src="docs/landing.png" alt="Landing Page" width="100%" />
 <br/><em>Landing Page</em>
+</div>
+
+<br/> -->
+
+<div align="center">
+<img src="docs/single-image-detection.png" alt="Image Detection" width="100%" />
+<br/><em>Image Detection — Verdict + Grad-CAM Heatmap</em>
+</div>
+
+<br/>
+
+<div align="center">
+<img src="docs/batch-gradcam.png" alt="Batch Grad-CAM" width="100%" />
+<br/><em>Batch Grad-CAM — Multi-image Explanation Grid</em>
 </div>
 
 <br/>

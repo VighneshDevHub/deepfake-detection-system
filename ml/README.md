@@ -24,6 +24,23 @@ This directory contains the complete training, evaluation, and export pipeline f
 <table>
 <tr>
 <td align="center" width="50%">
+<img src="../docs/single-image-detection.png" alt="Single Image Detection" width="100%" />
+<br/><em>Image Detection — Verdict + Grad-CAM</em>
+</td>
+<td align="center" width="50%">
+<img src="../docs/batch-gradcam.png" alt="Batch Grad-CAM" width="100%" />
+<br/><em>Batch Grad-CAM — Multi-image Grid</em>
+</td>
+</tr>
+</table>
+</div>
+
+<br/>
+
+<div align="center">
+<table>
+<tr>
+<td align="center" width="50%">
 <img src="../docs/confusion matrix.jpeg" alt="Confusion Matrix" width="100%" />
 <br/><em>Confusion Matrix on Validation Set</em>
 </td>
