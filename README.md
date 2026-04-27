@@ -690,4 +690,8 @@ Built with precision for media forensics and digital trust.
 
 **DFFS — DeepFake Forensic System**
 
+<br/>
+
+Developed by [Vighnesh Salunkhe](https://github.com/vighneshsalunkhe)
+
 </div>

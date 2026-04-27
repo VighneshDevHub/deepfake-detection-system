@@ -182,4 +182,8 @@ For production, update the API endpoint in the extension settings to your deploy
 
 DFFS — DeepFake Forensic System · Chrome Extension Module
 
+<br/>
+
+Developed by [Vighnesh Salunkhe](https://github.com/vighneshsalunkhe)
+
 </div>

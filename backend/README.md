@@ -394,4 +394,8 @@ The `lifespan` context manager in `main.py` runs this sequence on every startup:
 
 DFFS — DeepFake Forensic System · Backend Module
 
+<br/>
+
+Developed by [Vighnesh Salunkhe](https://github.com/vighneshsalunkhe)
+
 </div>

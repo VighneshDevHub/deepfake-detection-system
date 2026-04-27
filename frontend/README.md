@@ -249,4 +249,8 @@ pnpm start
 
 DFFS — DeepFake Forensic System · Frontend Module
 
+<br/>
+
+Developed by [Vighnesh Salunkhe](https://github.com/vighneshsalunkhe)
+
 </div>
