@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/Stage1.png" alt="DFFS Banner" width="100%" />
+<img src="docs/hero.png" alt="DFFS Banner" width="100%" /> 
 
 <br/>
 
@@ -39,6 +39,39 @@
 - [Chrome Extension](#chrome-extension)
 - [Environment Variables](#environment-variables)
 - [Deployment](#deployment)
+
+---
+
+## Screenshots
+
+<div align="center">
+<img src="docs/landing.png" alt="Landing Page" width="100%" />
+<br/><em>Landing Page</em>
+</div>
+
+<br/>
+
+<div align="center">
+<table>
+<tr>
+<td align="center" width="50%">
+<img src="docs/confusion matrix.jpeg" alt="Confusion Matrix" width="100%" />
+<br/><em>Model Confusion Matrix</em>
+</td>
+<td align="center" width="50%">
+<img src="docs/Roc curve.jpeg" alt="ROC Curve" width="100%" />
+<br/><em>ROC Curve — AUC Score</em>
+</td>
+</tr>
+</table>
+</div>
+
+<br/>
+
+<div align="center">
+<img src="docs/Stage1-dataset.png" alt="Dataset Overview" width="80%" />
+<br/><em>Training Dataset Overview</em>
+</div>
 
 ---
 
